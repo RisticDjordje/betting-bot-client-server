@@ -1,31 +1,32 @@
 package com.example.ezmoneybettingapp
 
 import android.os.Bundle
+import android.view.KeyEvent
 import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 
 class MainActivity : AppCompatActivity() {
+
+    lateinit var leftBtn: Button
+    lateinit var rightBtn: Button
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-
         // VARIABLES
         val sendUsernameBtn = findViewById<Button>(R.id.sendUsernameBtn)
         val username = findViewById<TextView>(R.id.username)
-
-//        val counterBtn = findViewById<Button>(R.id.counterBtn)
-//        val countTextView = findViewById<TextView>(R.id.countTextView)
-
         val consoleLog = findViewById<TextView>(R.id.consoleLogTextView)
         var consoleLogCounter = 0
 
-        val leftBtn = findViewById<Button>(R.id.leftBtn)
-        val rightBtn = findViewById<Button>(R.id.rightBtn)
+        leftBtn = findViewById<Button>(R.id.leftBtn)
+        rightBtn = findViewById<Button>(R.id.rightBtn)
 
-//      val consoleScrollView = findViewById<ScrollView>(R.id.consoleScrollView)
 
+//        val counterBtn = findViewById<Button>(R.id.counterBtn)
+//        val countTextView = findViewById<TextView>(R.id.countTextView)
 
 //        // SCROLL FUNCTION
 //        fun ScrollView.scrollToBottom() {
@@ -83,7 +84,6 @@ class MainActivity : AppCompatActivity() {
                     consoleLog.append("\n------------------------------------------------------")
 //                    consoleScrollView.scrollToBottom()
                 }
-
             }
         }
 
@@ -147,36 +147,14 @@ class MainActivity : AppCompatActivity() {
 //        }
 
     }
-//    override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
-//
-//        when (keyCode) {
-//            KeyEvent.KEYCODE_VOLUME_DOWN -> Toast.makeText(applicationContext, "Volume Down Key Pressed", Toast.LENGTH_SHORT).show()
-//            KeyEvent.KEYCODE_VOLUME_UP -> Toast.makeText(applicationContext, "Volume Up Key Pressed", Toast.LENGTH_SHORT).show()
-//        }
-//        return true
-//    }
-//
-//    override fun dispatchKeyEvent(event: KeyEvent): Boolean {
-//        val action: Int = event.getAction()
-//        val keyCode: Int = event.getKeyCode()
-//        return when (keyCode) {
-//            KeyEvent.KEYCODE_VOLUME_UP -> {
-//                if (action == KeyEvent.ACTION_DOWN) {
-//                    mSocket.emit("right_button")
-//                    // Updating the CLIENT console
-//                    consoleLogCounter++
-//                    consoleLog.append("\n$consoleLogCounter | CLIENT: Signal for RIGHT sent to the server.")
-//                }
-//                true
-//            }
-//            KeyEvent.KEYCODE_VOLUME_DOWN -> {
-//                if (action == KeyEvent.ACTION_DOWN) {
-//                    //TODO
-//                }
-//                true
-//            }
-//            else -> super.dispatchKeyEvent(event)
-//        }
-//    }
+
+    override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
+
+        when (keyCode) {
+            KeyEvent.KEYCODE_VOLUME_DOWN -> leftBtn.callOnClick()
+            KeyEvent.KEYCODE_VOLUME_UP -> rightBtn.callOnClick()
+        }
+        return true
+    }
 
 }
