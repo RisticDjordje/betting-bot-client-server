@@ -1,8 +1,12 @@
 package com.example.ezmoneybettingapp
 
 import android.os.Bundle
+import android.view.Gravity
 import android.view.KeyEvent
+import android.view.ViewGroup
 import android.widget.Button
+import android.widget.ImageView
+import android.widget.PopupWindow
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 
@@ -17,26 +21,13 @@ class MainActivity : AppCompatActivity() {
 
         // VARIABLES
         val sendUsernameBtn = findViewById<Button>(R.id.sendUsernameBtn)
+        val blackScreenBtn = findViewById<Button>(R.id.blackScreenBtn)
         val username = findViewById<TextView>(R.id.username)
         val consoleLog = findViewById<TextView>(R.id.consoleLogTextView)
         var consoleLogCounter = 0
 
-        leftBtn = findViewById<Button>(R.id.leftBtn)
-        rightBtn = findViewById<Button>(R.id.rightBtn)
 
-
-//        val counterBtn = findViewById<Button>(R.id.counterBtn)
-//        val countTextView = findViewById<TextView>(R.id.countTextView)
-
-//        // SCROLL FUNCTION
-//        fun ScrollView.scrollToBottom() {
-//            val lastChild = getChildAt(childCount - 1)
-//            val bottom = lastChild.bottom + paddingBottom
-//            val delta = bottom - (scrollY+ height)
-//            smoothScrollBy(0, delta)
-//        }
-
-
+        // MAKING CONNECTION
         // The following lines connects the Android app to the server.
         SocketHandler.setSocket()
         SocketHandler.establishConnection()
@@ -64,7 +55,6 @@ class MainActivity : AppCompatActivity() {
 
 
         // SEND BUTTON
-
         // When the CLIENT clicks SEND button
         sendUsernameBtn.setOnClickListener {
             // Sending the username to the SERVER
@@ -82,14 +72,29 @@ class MainActivity : AppCompatActivity() {
                     consoleLogCounter++
                     consoleLog.append("\n$consoleLogCounter | SERVER: Received username: ${args[0]}")
                     consoleLog.append("\n------------------------------------------------------")
-//                    consoleScrollView.scrollToBottom()
                 }
             }
         }
 
 
-        // LEFT BUTTON
+        // BLACK SCREEN BUTTON
+        blackScreenBtn.setOnClickListener {
+            val view = layoutInflater.inflate(R.layout.layout_popup, null, false)
+            val popupWindow = PopupWindow(
+                view,
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT
+            )
+            popupWindow.showAtLocation(view, Gravity.CENTER, 0, 0)
+            val popupLayoutImageView = view.findViewById<ImageView>(R.id.popupLayoutImageView)
+            popupLayoutImageView.setOnClickListener {
+                popupWindow.dismiss()
+            }
+        }
 
+
+        // LEFT BUTTON
+        leftBtn = findViewById(R.id.leftBtn)
         // When the CLIENT clicks LEFT button
         leftBtn.setOnClickListener {
             // Sending the LEFT signal to the SERVER
@@ -106,13 +111,13 @@ class MainActivity : AppCompatActivity() {
                 consoleLogCounter++
                 consoleLog.append("\n$consoleLogCounter | SERVER: Received LEFT signal.")
                 consoleLog.append("\n------------------------------------------------------")
-//                consoleLog.editableText.insert(0, "$consoleLogCounter | SERVER: Received LEFT signal.\n")
+                // consoleLog.editableText.insert(0, "$consoleLogCounter | SERVER: Received LEFT signal.\n")
             }
         }
 
 
         // RIGHT BUTTON
-
+        rightBtn = findViewById(R.id.rightBtn)
         // When the CLIENT clicks RIGHT button
         rightBtn.setOnClickListener {
             // Sending the LEFT signal to the SERVER
@@ -131,23 +136,9 @@ class MainActivity : AppCompatActivity() {
                 consoleLog.append("\n------------------------------------------------------")
             }
         }
-
-
-//        counterBtn.setOnClickListener {
-//            mSocket.emit("counter")
-//        }
-//
-//        mSocket.on("counter") { args ->
-//            if (args[0] != null) {
-//                val counter = args[0] as Int
-//                runOnUiThread {
-//                    countTextView.text = counter.toString()
-//                }
-//            }
-//        }
-
     }
 
+    // Overwriting volume control buttons
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
 
         when (keyCode) {
