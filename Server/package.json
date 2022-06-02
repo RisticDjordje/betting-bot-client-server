@@ -4,14 +4,17 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "nodemon": "nodemon server.js",
     "start": "node server.js"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "colors": "^1.4.0",
     "express": "^4.18.1",
     "localtunnel": "^2.0.2",
+    "nodemon": "^2.0.16",
+    "puppeteer": "^14.1.1",
     "socket.io": "^4.5.1"
   }
 }

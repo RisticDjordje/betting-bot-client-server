@@ -3,10 +3,13 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
-        <entry key="..\:/Users/risti/Desktop/betting-bot-client-server/EZMoneyBettingApp/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.2555" />
-        <entry key="..\:/Users/risti/Desktop/betting-bot-client-server/EZMoneyBettingApp/app/src/main/res/drawable/ic_launcher_background.xml" value="0.2555" />
-        <entry key="..\:/Users/risti/Desktop/betting-bot-client-server/EZMoneyBettingApp/app/src/main/res/layout/activity_main.xml" value="0.25" />
-        <entry key="..\:/Users/risti/Desktop/betting-bot-client-server/EZMoneyBettingApp/app/src/main/res/layout/layout_popup.xml" value="0.18671875" />
+        <entry key="..\:/Users/risti/Desktop/EZMoneyBettingApp/app/src/main/res/layout/activity_main.xml" value="0.25" />
+        <entry key="..\:/Users/risti/Desktop/EZMoneyBettingApp/app/src/main/res/layout/blackscreen_popup.xml" value="0.25" />
+        <entry key="..\:/Users/risti/Desktop/EZMoneyBettingApp/app/src/main/res/layout/offer_row.xml" value="0.24895833333333334" />
+        <entry key="..\:/Users/risti/Desktop/EZMoneyBettingApp/app/src/main/res/layout/offers_popup.xml" value="0.25" />
+        <entry key="..\:/Users/risti/Desktop/betting-bot-client-server/EZMoneyBettingApp/app/src/main/res/layout/activity_main.xml" value="0.223731884057971" />
+        <entry key="..\:/Users/risti/Desktop/betting-bot-client-server/EZMoneyBettingApp/app/src/main/res/layout/activity_second.xml" value="0.223731884057971" />
+        <entry key="..\:/Users/risti/Desktop/betting-bot-client-server/EZMoneyBettingApp/app/src/main/res/layout/offers_popup.xml" value="0.25" />
       </map>
     </option>
   </component>
