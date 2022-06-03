@@ -5,8 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#00F44336"
-    tools:context=".SecondActivity"
-    android:theme="@android:style/Theme.NoTitleBar.Fullscreen">
+    android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
+    tools:context=".SecondActivity">
 
 
     <TextView
@@ -14,14 +14,12 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="40dp"
         android:layout_marginEnd="32dp"
-        android:background="#DACEACF4"
+        android:background="#1D673AB7"
         android:gravity="center"
-        android:hint="No offer chosen"
-        android:paddingLeft="10dp"
-        android:paddingTop="5dp"
-        android:textSize="18sp"
+        android:text="No offer chosen"
+        android:textSize="22sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -53,7 +51,7 @@
         app:layout_constraintStart_toEndOf="@+id/leftBtn" />
 
     <ScrollView
-        android:id="@+id/consoleScrollView"
+        android:id="@+id/consoleScrollView2nd"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginStart="32dp"
@@ -69,7 +67,7 @@
 
 
         <TextView
-            android:id="@+id/consoleLogTextView"
+            android:id="@+id/consoleLogTextView2nd"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:hint="Console Log"

@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import org.json.JSONArray
 
 class MainActivity : AppCompatActivity() {
 
@@ -13,7 +14,9 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
 
-        val sendUsernameBtn = findViewById<Button>(R.id.loginBtn)
+        val loginBtn = findViewById<Button>(R.id.loginBtn)
+        val chooseMatchBtn = findViewById<Button>(R.id.chooseMatchBtn)
+        val matchNameTextView = findViewById<TextView>(R.id.matchNameTextView)
         val username = findViewById<TextView>(R.id.username)
         val consoleLog = findViewById<TextView>(R.id.consoleLogTextView)
         var consoleLogCounter = 0
@@ -49,9 +52,58 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        // SEND BUTTON
+        chooseMatchBtn.setOnClickListener {
+
+            // Sending the username to the SERVER
+            mSocket.emit("matches_request")
+            // Updating the CLIENT console
+            matchNameTextView.text = "requesting matches"
+            consoleLogCounter++
+            consoleLog.append("\n$consoleLogCounter | CLIENT: Requesting offers from server.")
+        }
+
+
+        // Server sending current matches
+        mSocket.on("current_matches") { args ->
+            if (args[0] != null) {
+                runOnUiThread {
+                    val matchesNames = ArrayList<String>()
+
+                    val jsMatchesNames = args[0] as JSONArray?
+
+                    if (jsMatchesNames != null) {
+                        for (i in 0 until jsMatchesNames.length()) {
+                            matchesNames.add(jsMatchesNames.getString(i))
+                        }
+                    }
+
+                    val dialog = MatchesDialogFragment(matchesNames)
+                    dialog.show(supportFragmentManager, "matchesDialog")
+
+                    // Updating the CLIENT console
+                    consoleLogCounter++
+                    consoleLog.append("\n$consoleLogCounter | SERVER: Matches given.")
+                    consoleLog.append("\n------------------------------------------------------")
+                }
+            }
+        }
+
+        // Notification from SERVER after receiving the match choice
+        mSocket.on("match_clicked_received") { args ->
+            if (args[0] != null) {
+                runOnUiThread {
+                    // Updating the CLIENT console
+                    consoleLogCounter++
+                    consoleLog.append("\n$consoleLogCounter | SERVER: Received chosen match: ${args[0]}.")
+                    consoleLog.append("\n------------------------------------------------------")
+                }
+            }
+        }
+
+
+        // LOGIN BUTTON
         // When the CLIENT clicks SEND button
-        sendUsernameBtn.setOnClickListener {
+        loginBtn.setOnClickListener {
 
             // Sending the username to the SERVER
             mSocket.emit("login", username.text)
@@ -122,6 +174,10 @@ class MainActivity : AppCompatActivity() {
                     startActivity(intent)
                 }
             }
+        }
+
+        mSocket.on("disconnect") {
+
         }
 
     }

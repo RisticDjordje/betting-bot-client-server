@@ -9,6 +9,8 @@ import android.widget.ImageView
 import android.widget.PopupWindow
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import org.json.JSONArray
+
 
 class SecondActivity : AppCompatActivity() {
 
@@ -19,99 +21,61 @@ class SecondActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_second)
 
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
         // VARIABLES
-//        val sendUsernameBtn = findViewById<Button>(R.id.loginBtn)
         val blackScreenBtn = findViewById<Button>(R.id.blackScreenBtn)
         val offersBtn = findViewById<Button>(R.id.offersBtn)
-//        val username = findViewById<TextView>(R.id.username)
-        val consoleLog = findViewById<TextView>(R.id.consoleLogTextView)
+        val consoleLog = findViewById<TextView>(R.id.consoleLogTextView2nd)
         var consoleLogCounter = 0
-//        val offers: MutableListOf
-//        offers.add("fadsfasd", "fasdfadsfsadf", "fadsfadsfa")
-
-        // MAKING CONNECTION
-        // The following lines connects the Android app to the server.
-//        SocketHandler.setSocket()
-//        SocketHandler.establishConnection()
 
 
         val mSocket = SocketHandler.getSocket()
 
-
-//        // CLIENT receiving that they are connected from the SERVER
-//        mSocket.on("connected") { args ->
-//            if (args[0] != null) {
-//                val id = args[0] as String
-//                runOnUiThread {
-//                    consoleLogCounter++
-//
-//                    if (consoleLog.text.isEmpty()) {
-//                        consoleLog.append("$consoleLogCounter | SERVER: You are connected to the server.")
-//                    } else {
-//                        consoleLog.append("\n$consoleLogCounter | SERVER: You are connected to the server.")
-//                    }
-//
-//                    consoleLogCounter++
-//                    consoleLog.append("\n$consoleLogCounter | Your ID: $id\n------------------------------------------------------")
-//                }
-//            }
-//        }
-
-
-//        // SEND BUTTON
-//        // When the CLIENT clicks SEND button
-//        sendUsernameBtn.setOnClickListener {
-//            // Sending the username to the SERVER
-//            mSocket.emit("login", username.text)
-//            // Updating the CLIENT console
-//            consoleLogCounter++
-//            consoleLog.append("\n$consoleLogCounter | CLIENT: ${username.text} sent to the server.")
-//        }
-//
-//        // Notification from SERVER after receiving USERNAME from client
-//        mSocket.on("login_successful") { args ->
-//            if (args[0] != null) {
-//                runOnUiThread {
-//                    // Updating the CLIENT console
-//                    consoleLogCounter++
-//                    consoleLog.append("\n$consoleLogCounter | SERVER: Login successful: ${args[0]}")
-//                    consoleLog.append("\n------------------------------------------------------")
-//                }
-//            }
-//        }
-
-//        mSocket.on("login_unsuccessful") { args ->
-//            if (args[0] != null) {
-//                runOnUiThread {
-//                    // Updating the CLIENT console
-//                    consoleLogCounter++
-//                    consoleLog.append("\n$consoleLogCounter | SERVER: Wrong username: ${args[0]}. Try again!")
-//                    consoleLog.append("\n------------------------------------------------------")
-//                }
-//            }
-//        }
-
-
+        val currentOfferTextView = findViewById<TextView>(R.id.currentOfferTextView)
         // OFFERS SCREEN BUTTON
         offersBtn.setOnClickListener {
             mSocket.emit("offers_request")
-            val view = layoutInflater.inflate(R.layout.offers_popup, null, false)
-            val popupWindow = PopupWindow(
-                view,
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.MATCH_PARENT
-            )
-            popupWindow.showAtLocation(view, Gravity.CENTER, 0, 0)
+            currentOfferTextView.text = "requesting"
+            consoleLogCounter++
+            consoleLog.append("\n$consoleLogCounter | CLIENT: Requesting offers from server.")
         }
 
         // Notification from SERVER after receiving OFFERS click from client
-        mSocket.on("offers_sent") { args ->
+        mSocket.on("current_offers") { args ->
             if (args[0] != null) {
                 runOnUiThread {
-//                    offers = args[0]
+                    val offerTitles = ArrayList<String>()
+                    val offerNames = ArrayList<String>()
+
+                    val jsOfferTitles = args[0] as JSONArray?
+                    val jsOfferNames = args[1] as JSONArray?
+
+                    if (jsOfferNames != null && jsOfferTitles != null && jsOfferNames.length() == jsOfferTitles.length()) {
+                        for (i in 0 until jsOfferNames.length()) {
+                            offerTitles.add(jsOfferTitles.getString(i))
+                            offerNames.add(jsOfferNames.getString(i))
+                        }
+                    }
+
+                    val dialog = OffersDialogFragment(offerTitles, offerNames)
+                    dialog.show(supportFragmentManager, "offersDialog")
+
                     // Updating the CLIENT console
                     consoleLogCounter++
-                    consoleLog.append("\n$consoleLogCounter | SERVER: Offers sent.")
+                    consoleLog.append("\n$consoleLogCounter | SERVER: Offers given.")
+                    consoleLog.append("\n------------------------------------------------------")
+                }
+            }
+        }
+
+        // Notification from SERVER after receiving OFFER CHOSEN
+        mSocket.on("offer_clicked_received") { args ->
+            if (args[0] != null) {
+                runOnUiThread {
+                    // Updating the CLIENT console
+                    consoleLogCounter++
+                    consoleLog.append("\n$consoleLogCounter | SERVER: Received offer: ${args[0]}.")
                     consoleLog.append("\n------------------------------------------------------")
                 }
             }
@@ -177,6 +141,8 @@ class SecondActivity : AppCompatActivity() {
                 consoleLog.append("\n------------------------------------------------------")
             }
         }
+
+
     }
 
     // Overwriting volume control buttons
