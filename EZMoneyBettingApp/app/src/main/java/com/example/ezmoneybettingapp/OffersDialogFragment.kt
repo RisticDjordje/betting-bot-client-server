@@ -30,7 +30,7 @@ class OffersDialogFragment(
         savedInstanceState: Bundle?
     ): View {
 
-        val rootView: View = inflater.inflate(R.layout.offers_dialog_fragment, container, false)
+        val rootView: View = inflater.inflate(R.layout.dialog_fragment_with_recycler_view, container, false)
 
         val offersAdapter = OffersAdapter(offer_names)
         val offersList = rootView.findViewById<RecyclerView>(R.id.offersList)

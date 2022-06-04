@@ -41,7 +41,7 @@ class SecondActivity : AppCompatActivity() {
             if (consoleLog.text.isEmpty()) {
                 consoleLogCounter++
                 consoleLog.append("$consoleLogCounter | CLIENT: Requesting offers from server.")
-            }else{
+            } else {
                 consoleLogCounter++
                 consoleLog.append("\n$consoleLogCounter | CLIENT: Requesting offers from server.")
             }
@@ -81,7 +81,7 @@ class SecondActivity : AppCompatActivity() {
                 runOnUiThread {
                     // Updating the CLIENT console
                     consoleLogCounter++
-                    consoleLog.append("\n$consoleLogCounter | SERVER: Received offer: ${args[0]}.")
+                    consoleLog.append("\n$consoleLogCounter | SERVER: Received offer: ${args[0]}")
                     consoleLog.append("\n------------------------------------------------------")
                     currentOfferTextView.text = args[0].toString()
                 }

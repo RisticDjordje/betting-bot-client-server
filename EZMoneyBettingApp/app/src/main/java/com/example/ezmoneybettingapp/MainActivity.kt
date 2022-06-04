@@ -2,6 +2,7 @@ package com.example.ezmoneybettingapp
 
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
 import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
@@ -95,7 +96,7 @@ class MainActivity : AppCompatActivity() {
                     // Updating the CLIENT console
                     val matchChosen = args[0].toString().substring(9)
                     consoleLogCounter++
-                    consoleLog.append("\n$consoleLogCounter | SERVER: Received chosen match: ${matchChosen}.")
+                    consoleLog.append("\n$consoleLogCounter | SERVER: Received chosen match: ${matchChosen}")
                     consoleLog.append("\n------------------------------------------------------")
                     matchNameTextView.text = matchChosen
                 }
@@ -124,7 +125,7 @@ class MainActivity : AppCompatActivity() {
                     consoleLog.append("\n$consoleLogCounter | SERVER: Successfully logged in to ${args[0]}.")
                     consoleLog.append("\n------------------------------------------------------")
                     consoleLogCounter++
-                    consoleLog.append("\n$consoleLogCounter | SERVER: Now logging in to ${args[1]} WWin accounts.")
+                    consoleLog.append("\n$consoleLogCounter | SERVER: Now logging in to ${args[1]} WWin account(s).")
                     consoleLog.append("\n------------------------------------------------------")
                 }
             }
@@ -160,7 +161,7 @@ class MainActivity : AppCompatActivity() {
                 runOnUiThread {
                     // Updating the CLIENT console
                     consoleLogCounter++
-                    consoleLog.append("\n$consoleLogCounter | SERVER: Successfully logged in to WWin account: ${args[0]}.")
+                    consoleLog.append("\n$consoleLogCounter | SERVER: Successfully logged in to WWin account: ${args[0]}")
                 }
             }
         }
@@ -171,10 +172,13 @@ class MainActivity : AppCompatActivity() {
                 runOnUiThread {
                     // Updating the CLIENT console
                     consoleLogCounter++
+                    consoleLog.append("\n------------------------------------------------------")
                     consoleLog.append("\n$consoleLogCounter | SERVER: Login finished. Successfully logged in into ${args[0]} WWin accounts.")
                     consoleLog.append("\n------------------------------------------------------")
-                    val intent = Intent(this, SecondActivity::class.java)
-                    startActivity(intent)
+                    Handler().postDelayed({
+                        val intent = Intent(this, SecondActivity::class.java)
+                        startActivity(intent)
+                    }, 3000)
                 }
             }
         }
