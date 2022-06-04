@@ -57,9 +57,9 @@ class MainActivity : AppCompatActivity() {
             // Sending the username to the SERVER
             mSocket.emit("matches_request")
             // Updating the CLIENT console
-            matchNameTextView.text = "requesting matches"
+            matchNameTextView.text = "Requesting matches"
             consoleLogCounter++
-            consoleLog.append("\n$consoleLogCounter | CLIENT: Requesting offers from server.")
+            consoleLog.append("\n$consoleLogCounter | CLIENT: Requesting matches from server.")
         }
 
 
@@ -93,9 +93,11 @@ class MainActivity : AppCompatActivity() {
             if (args[0] != null) {
                 runOnUiThread {
                     // Updating the CLIENT console
+                    val matchChosen = args[0].toString().substring(9)
                     consoleLogCounter++
-                    consoleLog.append("\n$consoleLogCounter | SERVER: Received chosen match: ${args[0]}.")
+                    consoleLog.append("\n$consoleLogCounter | SERVER: Received chosen match: ${matchChosen}.")
                     consoleLog.append("\n------------------------------------------------------")
+                    matchNameTextView.text = matchChosen
                 }
             }
         }
@@ -120,6 +122,7 @@ class MainActivity : AppCompatActivity() {
                     // Updating the CLIENT console
                     consoleLogCounter++
                     consoleLog.append("\n$consoleLogCounter | SERVER: Successfully logged in to ${args[0]}.")
+                    consoleLog.append("\n------------------------------------------------------")
                     consoleLogCounter++
                     consoleLog.append("\n$consoleLogCounter | SERVER: Now logging in to ${args[1]} WWin accounts.")
                     consoleLog.append("\n------------------------------------------------------")

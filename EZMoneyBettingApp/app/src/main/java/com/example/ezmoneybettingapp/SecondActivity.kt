@@ -33,12 +33,18 @@ class SecondActivity : AppCompatActivity() {
         val mSocket = SocketHandler.getSocket()
 
         val currentOfferTextView = findViewById<TextView>(R.id.currentOfferTextView)
+
         // OFFERS SCREEN BUTTON
         offersBtn.setOnClickListener {
             mSocket.emit("offers_request")
             currentOfferTextView.text = "requesting"
-            consoleLogCounter++
-            consoleLog.append("\n$consoleLogCounter | CLIENT: Requesting offers from server.")
+            if (consoleLog.text.isEmpty()) {
+                consoleLogCounter++
+                consoleLog.append("$consoleLogCounter | CLIENT: Requesting offers from server.")
+            }else{
+                consoleLogCounter++
+                consoleLog.append("\n$consoleLogCounter | CLIENT: Requesting offers from server.")
+            }
         }
 
         // Notification from SERVER after receiving OFFERS click from client
@@ -70,13 +76,14 @@ class SecondActivity : AppCompatActivity() {
         }
 
         // Notification from SERVER after receiving OFFER CHOSEN
-        mSocket.on("offer_clicked_received") { args ->
+        mSocket.on("offer_received_name") { args ->
             if (args[0] != null) {
                 runOnUiThread {
                     // Updating the CLIENT console
                     consoleLogCounter++
                     consoleLog.append("\n$consoleLogCounter | SERVER: Received offer: ${args[0]}.")
                     consoleLog.append("\n------------------------------------------------------")
+                    currentOfferTextView.text = args[0].toString()
                 }
             }
         }

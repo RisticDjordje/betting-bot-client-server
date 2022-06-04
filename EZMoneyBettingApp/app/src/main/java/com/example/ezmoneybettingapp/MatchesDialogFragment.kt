@@ -30,12 +30,9 @@ class MatchesDialogFragment(
     ): View {
 
         val rootView: View = inflater.inflate(R.layout.offers_dialog_fragment, container, false)
-//        var secondActivityView: View = inflater.inflate(R.layout.activity_second, container, false)
-
 
         val offersAdapter = OffersAdapter(matchNames)
         val offersList = rootView.findViewById<RecyclerView>(R.id.offersList)
-//        val currentOfferTextView = secondActivityView.findViewById<TextView>(R.id.currentOfferTextView)
         val mSocket = SocketHandler.getSocket()
 
         offersList.apply {
@@ -52,13 +49,12 @@ class MatchesDialogFragment(
                 ) { _, position ->
                     Toast.makeText(
                         requireContext(),
-                        "Clicked: " + matchNames[position],
+                        "Clicked: " + matchNames[position].substring(9),
                         Toast.LENGTH_SHORT
                     )
                         .show()
 
                     mSocket.emit("match_chosen", matchNames[position])
-                    //                            currentOfferTextView.text = "chosen"
                     dismiss()
                 })
         }

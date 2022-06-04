@@ -31,12 +31,9 @@ class OffersDialogFragment(
     ): View {
 
         val rootView: View = inflater.inflate(R.layout.offers_dialog_fragment, container, false)
-//        var secondActivityView: View = inflater.inflate(R.layout.activity_second, container, false)
-
 
         val offersAdapter = OffersAdapter(offer_names)
         val offersList = rootView.findViewById<RecyclerView>(R.id.offersList)
-//        val currentOfferTextView = secondActivityView.findViewById<TextView>(R.id.currentOfferTextView)
         val mSocket = SocketHandler.getSocket()
 
         offersList.apply {
@@ -58,8 +55,7 @@ class OffersDialogFragment(
                     )
                         .show()
 
-                    mSocket.emit("offer_chosen", offer_titles[position])
-                    //                            currentOfferTextView.text = "chosen"
+                    mSocket.emit("offer_chosen", offer_titles[position], offer_names[position])
                     dismiss()
                 })
         }

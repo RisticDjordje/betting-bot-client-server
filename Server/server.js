@@ -41,14 +41,14 @@ var index_of_offer = -1;
 // Login information
 var login_information = {
     relja: [["relja12345", "Relja15052002"], ["somi333", "srbija333"], ["djordjeristic", "DjordjeR81"]],
-    somi: [["sdfsdf5", "asdffasdfa"], ["somi333", "asf"]],
+    somi: [["somi333", "srbija333"]],
     djordje: [["djordjeristic", "DjordjeR81"]],
 };
 
 
 io.on('connection', async (socket) => {
 
-    // Number of brosw
+    // Number of browsers
     var number_of_browsers;
     // Name of the match we want to bet on
     var match_title;
@@ -117,8 +117,8 @@ io.on('connection', async (socket) => {
                 await click_football.click()
 
                 //FIND TITLES OF ALL MATCHES
-                var matches = await find_matches;
-
+                var matches = await array_of_pages[i].$$eval("div.live-match__hov ", (matches) =>
+                    matches.map((option) => option.title));
 
                 for (j = 0; j < matches.length; j++) {
 
@@ -145,12 +145,12 @@ io.on('connection', async (socket) => {
         } else {
 
             if (!(username in login_information) || logged_users_ids == 0) {
-                console.log(colors.brightGreen(username) + colors.brightRed("not found."))
+                console.log(colors.brightGreen(username) + colors.brightRed(" not found."))
                 socket.emit('username_not_found', (username));
             }
             else//(!(logged_users_names.includes(username)))
             {
-                console.log(colors.brightGreen(username) + colors.brightRed("already logged in."))
+                console.log(colors.brightGreen(username) + colors.brightRed(" already logged in."))
                 socket.emit('username_logged_in', (username));
             }
 
@@ -162,7 +162,6 @@ io.on('connection', async (socket) => {
         console.log(colors.brightGreen(username__) + " pressed LEFT/OVER/YES button.")
 
         array_of_place_bets = []
-
         var offer = array_of_offers[index_of_offer]
 
         var array_of_functions_1 = [
@@ -191,7 +190,6 @@ io.on('connection', async (socket) => {
         console.log(colors.brightGreen(username__) + " pressed RIGHT/UNDER/NO button.")
 
         array_of_place_bets = []
-
         var offer = array_of_offers[index_of_offer]
 
         var array_of_functions_2 = [
@@ -228,14 +226,15 @@ io.on('connection', async (socket) => {
 
 
     // RECEIVING OFFER FROM CLIENT
-    socket.on('offer_chosen', async (offer_received) => {
-        console.log(colors.brightGreen(username__) + " chose offer: " + colors.brightCyan(offer_received))
+    socket.on('offer_chosen', async (offer_received_title, offer_received_name) => {
+        console.log(colors.brightGreen(username__) + " chose offer. Name : " + colors.brightCyan(offer_received_name) +
+            " | Title : " + colors.brightCyan(offer_received_title))
 
-        array_of_offers.push(offer_received)
+        array_of_offers.push(offer_received_title)
         index_of_offer += 1
 
         // Letting the Client know OFFER has been received
-        socket.emit('offer_clicked_received', offer_received);
+        socket.emit('offer_received_name', offer_received_name);
     })
 
 
@@ -295,7 +294,6 @@ async function find_offer_names(i) {
 }
 
 
-
 // FUNCTION FOR PLACING BETS
 async function place_bet(side, offer, i) {
     var index_of_bet = 0
@@ -321,12 +319,12 @@ async function place_bet(side, offer, i) {
         if (titles_of_bets[j] == offer) {
             index_of_bet = j;
             index_of_bet++
-            console.log(colors.brightGreen(username__) + " | Offer " + colors.brightMagenta(names_of_bets[j]) + "found for account: " + colors.yellow(i))
+            console.log(colors.brightGreen(username__) + " | Offer " + colors.brightMagenta(names_of_bets[j]) + " found for account: " + colors.yellow(i))
             break;
         }
     }
     if (index_of_bet == 0) {
-        return console.log(colors.brightGreen(username__) + " | Offer " + colors.brightMagenta(offer) + "not found for account: " + colors.yellow(i))
+        return console.log(colors.brightGreen(username__) + " | Offer " + colors.brightMagenta(offer) + " not found for account: " + colors.yellow(i))
     }
 
 
@@ -344,27 +342,24 @@ async function place_bet(side, offer, i) {
     });
     if (is_selected == 0)                                              //CHECK IF BET IS SELECTED 
     {
-        return console.log(colors.brightYellow(username__ + " acc " + (i + 1) + " : Pokusaj opet, ponuda nije selektovana."))        //NO
+        return console.log(colors.brightYellow(username__ + " acc " + (i + 1) + " : Try again, bet is not selected."))        //NO
 
     }
     else {
-        console.log(colors.brightYellow(username__ + " acc " + (i + 1) + " :Ponuda selektovana !"))         //YES
+        console.log(colors.brightYellow(username__ + " acc " + (i + 1) + " : Bet selected!"))         //YES
     }
 
     if (availablemoney < bet_float) {
-        console.log(colors.brightYellow(username__ + " " + (i + 1) + " : Nema dovoljno para.Pokusajte ponovo."))
+        console.log(colors.brightYellow(username__ + " " + (i + 1) + " : Not enough money. Try again."))
         await delay(0.1)
         await selected_bet.click()
         return;
-    }
-    else {
-        console.log("ima para")
     }
 
     let searchInput = await array_of_pages[i].$('input[class="wstake__input"]');
     await searchInput.click({ clickCount: 2 });
     await searchInput.type(bet);
-    await delay(0.5)
+    await delay(0.3)
 
     //CONFIRM THE BET
     await array_of_pages[i].click('button[class = "btn--fill btn--checkout btn--xlarge "]');
@@ -382,12 +377,12 @@ async function place_bet(side, offer, i) {
 
     //DESELECT BET
 
-
     console.log(colors.magenta("\n " + username__ + " account " + (i + 1) + " :" + "\n -------------------------"))
-    console.log(colors.brightYellow("Uplaceno ") + (colors.brightGreen("EUR " + "0.1")))
+    console.log(colors.brightYellow("Paid ") + (colors.brightGreen("EUR " + "0.1")))
     var end = performance.now()
-    console.log(colors.brightYellow("Vrijeme : ") + colors.brightCyan(`${((end - start) / 1000).toFixed(2)} s`))
-    //console.log(colors.brightYellow(username__+" acc "+(i+1)+" : Vrijeme1 : ") + colors.brightCyan(`${((end1 - start1) / 1000).toFixed(2)} s`))
+    console.log(colors.brightYellow("Time 1 : ") + colors.brightCyan(`${((end1 - start1) / 1000).toFixed(2)} s`))
+    console.log(colors.brightYellow("Time : ") + colors.brightCyan(`${((end - start) / 1000).toFixed(2)} s`))
+    console.log("\n\n")
 
     await selected_bet.click();
     await selected_bet.click();
