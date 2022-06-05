@@ -12,7 +12,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
-        android:layout_marginTop="60dp"
+        android:layout_marginTop="35dp"
         android:layout_marginEnd="32dp"
         android:background="#1D673AB7"
         android:gravity="center"
@@ -57,9 +57,9 @@
             android:id="@+id/consoleLogTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:hint="Console Log"
             android:paddingLeft="10dp"
             android:paddingTop="5dp"
+            android:text="1 | Trying to connect to the server. Please wait.\n------------------------------------------------------"
             android:textColor="#000000"
             android:textSize="15sp" />
     </ScrollView>

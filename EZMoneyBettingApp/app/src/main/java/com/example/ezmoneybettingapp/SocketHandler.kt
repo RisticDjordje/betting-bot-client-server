@@ -15,7 +15,7 @@ object SocketHandler {
 // "http://localhost:3000/" will not work
 // If you want to use your physical phone you could use the your ip address plus :3000
 // This will allow your Android Emulator and physical device at your home to connect to the server
-            mSocket = IO.socket("https://whenlambosoon.loca.lt/")
+            mSocket = IO.socket("https://whenlambo-soon.loca.lt/")
         } catch (e: URISyntaxException) {
         }
     }

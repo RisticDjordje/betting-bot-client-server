@@ -1,5 +1,6 @@
 package com.example.ezmoneybettingapp
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.Gravity
 import android.view.KeyEvent
@@ -21,23 +22,27 @@ class SecondActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_second)
 
+        val mSocket = SocketHandler.getSocket()
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         // VARIABLES
         val blackScreenBtn = findViewById<Button>(R.id.blackScreenBtn)
         val offersBtn = findViewById<Button>(R.id.offersBtn)
+        val currentOfferTextView = findViewById<TextView>(R.id.currentOfferTextView)
         val consoleLog = findViewById<TextView>(R.id.consoleLogTextView2nd)
         var consoleLogCounter = 0
+        var isOfferChosen = false
 
-
-        val mSocket = SocketHandler.getSocket()
-
-        val currentOfferTextView = findViewById<TextView>(R.id.currentOfferTextView)
+        // Going back to first activity when the client is disconnected
+        mSocket.on("disconnect") {
+            val intent = Intent(this, MainActivity::class.java)
+            startActivity(intent)
+        }
 
         // OFFERS SCREEN BUTTON
         offersBtn.setOnClickListener {
             mSocket.emit("offers_request")
-            currentOfferTextView.text = "requesting"
+            currentOfferTextView.text = "Requesting offers"
             if (consoleLog.text.isEmpty()) {
                 consoleLogCounter++
                 consoleLog.append("$consoleLogCounter | CLIENT: Requesting offers from server.")
@@ -79,6 +84,7 @@ class SecondActivity : AppCompatActivity() {
         mSocket.on("offer_received_name") { args ->
             if (args[0] != null) {
                 runOnUiThread {
+                    isOfferChosen = true
                     // Updating the CLIENT console
                     consoleLogCounter++
                     consoleLog.append("\n$consoleLogCounter | SERVER: Received offer: ${args[0]}")
@@ -109,11 +115,18 @@ class SecondActivity : AppCompatActivity() {
         leftBtn = findViewById(R.id.leftBtn)
         // When the CLIENT clicks LEFT button
         leftBtn.setOnClickListener {
-            // Sending the LEFT signal to the SERVER
-            mSocket.emit("left_button")
-            // Updating the CLIENT console
-            consoleLogCounter++
-            consoleLog.append("\n$consoleLogCounter | CLIENT: Signal for LEFT sent to the server.")
+            if (isOfferChosen) {
+                // Sending the LEFT signal to the SERVER
+                mSocket.emit("left_button")
+                // Updating the CLIENT console
+                consoleLogCounter++
+                consoleLog.append("\n$consoleLogCounter | CLIENT: Signal for LEFT sent to the server.")
+            } else {
+                // Updating the CLIENT console
+                consoleLogCounter++
+                consoleLog.append("\n$consoleLogCounter | CLIENT: Firstly choose an offer!")
+                consoleLog.append("\n------------------------------------------------------")
+            }
         }
 
         // Notification from SERVER after receiving LEFT button signal
@@ -132,11 +145,18 @@ class SecondActivity : AppCompatActivity() {
         rightBtn = findViewById(R.id.rightBtn)
         // When the CLIENT clicks RIGHT button
         rightBtn.setOnClickListener {
-            // Sending the LEFT signal to the SERVER
-            mSocket.emit("right_button")
-            // Updating the CLIENT console
-            consoleLogCounter++
-            consoleLog.append("\n$consoleLogCounter | CLIENT: Signal for RIGHT sent to the server.")
+            if (isOfferChosen) {
+                // Sending the RIGHT signal to the SERVER
+                mSocket.emit("right_button")
+                // Updating the CLIENT console
+                consoleLogCounter++
+                consoleLog.append("\n$consoleLogCounter | CLIENT: Signal for RIGHT sent to the server.")
+            } else {
+                // Updating the CLIENT console
+                consoleLogCounter++
+                consoleLog.append("\n$consoleLogCounter | CLIENT: Firstly choose an offer!")
+                consoleLog.append("\n------------------------------------------------------")
+            }
         }
 
         // Notification from SERVER after receiving RIGHT button signal

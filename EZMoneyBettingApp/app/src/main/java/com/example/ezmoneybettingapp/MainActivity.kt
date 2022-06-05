@@ -15,15 +15,19 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
 
+        SocketHandler.setSocket()
+        SocketHandler.establishConnection()
+
+        // Variables
         val loginBtn = findViewById<Button>(R.id.loginBtn)
         val chooseMatchBtn = findViewById<Button>(R.id.chooseMatchBtn)
         val matchNameTextView = findViewById<TextView>(R.id.matchNameTextView)
         val username = findViewById<TextView>(R.id.username)
         val consoleLog = findViewById<TextView>(R.id.consoleLogTextView)
-        var consoleLogCounter = 0
+        var consoleLogCounter = 1
 
-        SocketHandler.setSocket()
-        SocketHandler.establishConnection()
+        var isMatchChosen = false
+        var isConnected = false
 
 
         val mSocket = SocketHandler.getSocket()
@@ -34,13 +38,12 @@ class MainActivity : AppCompatActivity() {
             if (args[0] != null) {
                 val id = args[0] as String
                 runOnUiThread {
-                    consoleLogCounter++
+                    isConnected = true
 
-                    if (consoleLog.text.isEmpty()) {
-                        consoleLog.append("$consoleLogCounter | SERVER: You are connected to the server.")
-                    } else {
-                        consoleLog.append("\n$consoleLogCounter | SERVER: You are connected to the server.")
-                    }
+                    // Updating the CLIENT console
+                    consoleLogCounter++
+                    consoleLog.append("\n$consoleLogCounter | SERVER: You are connected to the server.")
+
 
                     consoleLogCounter++
                     consoleLog.append("\n$consoleLogCounter | Your ID: $id\n------------------------------------------------------")
@@ -53,14 +56,25 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        chooseMatchBtn.setOnClickListener {
+        // Restarting the activity when the client is disconnected
+        mSocket.on("disconnect") {
+            val intent = Intent(this, MainActivity::class.java)
+            startActivity(intent)
+        }
 
-            // Sending the username to the SERVER
-            mSocket.emit("matches_request")
-            // Updating the CLIENT console
-            matchNameTextView.text = "Requesting matches"
-            consoleLogCounter++
-            consoleLog.append("\n$consoleLogCounter | CLIENT: Requesting matches from server.")
+        chooseMatchBtn.setOnClickListener {
+            if (isConnected) {
+                // Sending the username to the SERVER
+                mSocket.emit("matches_request")
+                // Updating the CLIENT console
+                matchNameTextView.text = "Requesting matches"
+                consoleLogCounter++
+                consoleLog.append("\n$consoleLogCounter | CLIENT: Requesting matches from server.")
+            } else {
+                consoleLogCounter++
+                consoleLog.append("\n$consoleLogCounter | CLIENT: You are not connected to the server. Please ensure you have stable internet access and wait.")
+                consoleLog.append("\n------------------------------------------------------")
+            }
         }
 
 
@@ -93,8 +107,9 @@ class MainActivity : AppCompatActivity() {
         mSocket.on("match_clicked_received") { args ->
             if (args[0] != null) {
                 runOnUiThread {
-                    // Updating the CLIENT console
                     val matchChosen = args[0].toString().substring(9)
+                    isMatchChosen = true
+                    // Updating the CLIENT console
                     consoleLogCounter++
                     consoleLog.append("\n$consoleLogCounter | SERVER: Received chosen match: ${matchChosen}")
                     consoleLog.append("\n------------------------------------------------------")
@@ -107,12 +122,18 @@ class MainActivity : AppCompatActivity() {
         // LOGIN BUTTON
         // When the CLIENT clicks SEND button
         loginBtn.setOnClickListener {
-
-            // Sending the username to the SERVER
-            mSocket.emit("login", username.text)
-            // Updating the CLIENT console
-            consoleLogCounter++
-            consoleLog.append("\n$consoleLogCounter | CLIENT: ${username.text} sent to the server.")
+            if (isMatchChosen) {
+                // Sending the LOGIN signal to the SERVER
+                mSocket.emit("login", username.text)
+                // Updating the CLIENT console
+                consoleLogCounter++
+                consoleLog.append("\n$consoleLogCounter | CLIENT: ${username.text} sent to the server.")
+            } else {
+                // Updating the CLIENT console
+                consoleLogCounter++
+                consoleLog.append("\n$consoleLogCounter | CLIENT: Firstly choose a match!")
+                consoleLog.append("\n------------------------------------------------------")
+            }
         }
 
 
@@ -122,7 +143,7 @@ class MainActivity : AppCompatActivity() {
                 runOnUiThread {
                     // Updating the CLIENT console
                     consoleLogCounter++
-                    consoleLog.append("\n$consoleLogCounter | SERVER: Successfully logged in to ${args[0]}.")
+                    consoleLog.append("\n$consoleLogCounter | SERVER: Successfully logged in to ${args[0]}")
                     consoleLog.append("\n------------------------------------------------------")
                     consoleLogCounter++
                     consoleLog.append("\n$consoleLogCounter | SERVER: Now logging in to ${args[1]} WWin account(s).")
@@ -137,7 +158,7 @@ class MainActivity : AppCompatActivity() {
                 runOnUiThread {
                     // Updating the CLIENT console
                     consoleLogCounter++
-                    consoleLog.append("\n$consoleLogCounter | SERVER: Wrong username: ${args[0]}.")
+                    consoleLog.append("\n$consoleLogCounter | SERVER: Wrong username: ${args[0]}")
                     consoleLog.append("\n------------------------------------------------------")
                 }
             }

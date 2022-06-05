@@ -14,9 +14,10 @@ console.log('Server is running. Listening at PORT: ' + PORT);
 const io = socket(server);
 
 const localtunnel = require('localtunnel');
+const { isBoolean } = require('util');
 (async () => {
     const tunnel = await localtunnel({
-        subdomain: "whenlambosoon",
+        subdomain: "whenlambo-soon",
         port: 3000
     });
     console.log(`Server available at: ${tunnel.url}`);
@@ -52,6 +53,8 @@ io.on('connection', async (socket) => {
     var number_of_browsers;
     // Name of the match we want to bet on
     var match_title;
+    // Boolean to store whether user is logged in or not
+    var is_logged_in = false;
 
     // When a new Client connection is opened.
     console.log("New socket connection: " + colors.yellow(socket.id))
@@ -60,19 +63,26 @@ io.on('connection', async (socket) => {
     socket.emit('connected', socket.id)
 
     socket.on('disconnect', async function () {
-        // var index = logged_users_ids.indexOf(socket.id)
-        // logged_users_ids.splice(index, 1)
-        // for (i = 0; i < login_information[username__].length; i++) {
-        //     await array_of_browsers[i].close()
-        // }
-        console.log("User disconnected. ID: " + colors.yellow(socket.id))
+
+        // Removing the user from the array of logged in users
+        if (is_logged_in) {
+            var index = logged_users_ids.indexOf(socket.id)
+            logged_users_ids.splice(index, 1)
+            for (i = 0; i < login_information[username__].length; i++) {
+                await array_of_browsers[i].close()
+            }
+            console.log(`${colors.red(username__)} (ID: ${colors.red(socket.id)}) disconnected. Closed all his browsers.`)
+        }
+        else {
+            console.log("User disconnected. ID: " + colors.red(socket.id))
+        }
     });
 
 
     // LOGIN BUTTON
     socket.on('login', async (username) => {
         username__ = username
-        console.log("ID: " + colors.brightGreen(socket.id) + " has attempted to log in to: " + colors.brightGreen(username))
+        console.log("ID: " + colors.yellow(socket.id) + " has attempted to log in to: " + colors.brightGreen(username))
         // If the username is in the array of usernames
         if (username in login_information && logged_users_ids.includes(socket.id) == false) {
 
@@ -136,21 +146,23 @@ io.on('connection', async (socket) => {
                 let found_match = await array_of_pages[i].waitForSelector(match_selector)
                 await found_match.click()
                 await delay(0.5)
-                console.log(colors.brightGreen(username) + " logged in to  |  WWin name : " + colors.brightYellow(login_information[username][i][0]) + "  |  Wwin password : " + colors.brightYellow(login_information[username][i][1]))
+                console.log(colors.brightGreen(username) + " logged in to  |  WWin name: " + colors.brightYellow(login_information[username][i][0]) + "  |  Wwin password: " + colors.brightYellow(login_information[username][i][1]))
                 socket.emit('page_logged_in', (login_information[username][i][0]))
             }
 
             // Letting the Client know USERNAME has been received
             socket.emit('login_finished', (number_of_browsers));
+            console.log("ID: " + colors.brightGreen(socket.id) + " has finished logging in to: " + colors.brightGreen(username))
+            is_logged_in = true;
         } else {
 
             if (!(username in login_information) || logged_users_ids == 0) {
-                console.log(colors.brightGreen(username) + colors.brightRed(" not found."))
+                console.log(colors.red(username) + colors.brightRed(" not found."))
                 socket.emit('username_not_found', (username));
             }
             else//(!(logged_users_names.includes(username)))
             {
-                console.log(colors.brightGreen(username) + colors.brightRed(" already logged in."))
+                console.log(colors.red(username) + colors.brightRed(" already logged in."))
                 socket.emit('username_logged_in', (username));
             }
 
@@ -227,7 +239,7 @@ io.on('connection', async (socket) => {
 
     // RECEIVING OFFER FROM CLIENT
     socket.on('offer_chosen', async (offer_received_title, offer_received_name) => {
-        console.log(colors.brightGreen(username__) + " chose offer. Name : " + colors.brightCyan(offer_received_name) +
+        console.log(colors.brightGreen(username__) + " chose offer. Name: " + colors.brightCyan(offer_received_name) +
             " | Title : " + colors.brightCyan(offer_received_title))
 
         array_of_offers.push(offer_received_title)
