@@ -188,7 +188,7 @@ if (cluster.isMaster) {
                     let found_match = await array_of_pages[i].waitForSelector(match_selector)
                     await found_match.click()
                     await delay(0.5)
-                    console.log(colors.brightGreen(username) + " logged in to  |  WWin name: " + colors.brightYellow(login_information[username][i][0]) + "  |  Wwin password: " + colors.brightYellow(login_information[username][i][1]))
+                    console.log(`W ${process.pid} | ${colors.brightGreen(username)} logged in to  |  WWin name: ${colors.brightYellow(login_information[username][i][0])}  |  Wwin password: ${colors.brightYellow(login_information[username][i][1])}`)
                     socket.emit('page_logged_in', (login_information[username][i][0]))
                 }
 
