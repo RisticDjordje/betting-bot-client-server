@@ -39,9 +39,10 @@ class SecondActivity : AppCompatActivity() {
         mSocket.on("disconnect") {
             val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
+            finish()
         }
 
-        // OFFERS SCREEN BUTTON
+        // OFFERS
         offersBtn.setOnClickListener {
             mSocket.emit("offers_request")
             currentOfferTextView.text = "Requesting offers"
@@ -190,6 +191,7 @@ class SecondActivity : AppCompatActivity() {
             mSocket.disconnect()
             val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
+            finish()
         }
         return false
     }

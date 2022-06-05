@@ -14,9 +14,11 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-
+        // Establishing a socket
         SocketHandler.setSocket()
         SocketHandler.establishConnection()
+        val mSocket = SocketHandler.getSocket()
+
 
         // Variables
         val loginBtn = findViewById<Button>(R.id.loginBtn)
@@ -25,12 +27,8 @@ class MainActivity : AppCompatActivity() {
         val username = findViewById<TextView>(R.id.username)
         val consoleLog = findViewById<TextView>(R.id.consoleLogTextView)
         var consoleLogCounter = 1
-
         var isMatchChosen = false
         var isConnected = false
-
-
-        val mSocket = SocketHandler.getSocket()
 
 
         // CLIENT receiving that they are connected from the SERVER
@@ -62,6 +60,8 @@ class MainActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
+
+        // CHOOSE MATCH
         chooseMatchBtn.setOnClickListener {
             if (isConnected) {
                 // Sending the username to the SERVER
@@ -102,6 +102,7 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
+
 
         // Notification from SERVER after receiving the match choice
         mSocket.on("match_clicked_received") { args ->
@@ -193,21 +194,16 @@ class MainActivity : AppCompatActivity() {
                 runOnUiThread {
                     // Updating the CLIENT console
                     consoleLogCounter++
-                    consoleLog.append("\n------------------------------------------------------")
                     consoleLog.append("\n$consoleLogCounter | SERVER: Login finished. Successfully logged in into ${args[0]} WWin accounts.")
                     consoleLog.append("\n------------------------------------------------------")
                     Handler().postDelayed({
                         val intent = Intent(this, SecondActivity::class.java)
                         startActivity(intent)
+                        finish()
                     }, 3000)
                 }
             }
         }
-
-        mSocket.on("disconnect") {
-
-        }
-
     }
 }
 
