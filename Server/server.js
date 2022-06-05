@@ -15,6 +15,7 @@ const io = socket(server);
 
 const localtunnel = require('localtunnel');
 const { isBoolean } = require('util');
+
 (async () => {
     const tunnel = await localtunnel({
         subdomain: "whenlambo-soon",
@@ -48,7 +49,6 @@ var login_information = {
 
 
 io.on('connection', async (socket) => {
-
     // Number of browsers
     var number_of_browsers;
     // Name of the match we want to bet on
@@ -321,28 +321,35 @@ async function place_bet(side, offer, i) {
     // variables for testing time
     var start = performance.now()
     var start1 = performance.now()
-    console.log(colors.brightYellow(colors.brightGreen(username__) + " | Searching for offer " + colors.brightMagenta(offer) + " for account: " + colors.yellow(i)));
+    console.log(colors.brightYellow(colors.brightGreen(username__) + " | Searching for offer " + colors.brightMagenta(offer) + " for account: " + colors.yellow(i + 1)));
 
     var titles_of_bets = await find_offer_titles(0);
     var names_of_bets = await find_offer_names(0);
+
+    if (titles_of_bets.includes(offer) == false) {
+        console.log(colors.brightRed("This offer is not active anymore."))
+        return
+    }
 
     for (j = 0; j < titles_of_bets.length; j++) {
 
         if (titles_of_bets[j] == offer) {
             index_of_bet = j;
             index_of_bet++
-            console.log(colors.brightGreen(username__) + " | Offer " + colors.brightMagenta(names_of_bets[j]) + " found for account: " + colors.yellow(i))
+            console.log(colors.brightYellow(colors.brightGreen(username__) + " | Offer " + colors.brightMagenta(names_of_bets[j]) + " found for account: " + colors.yellow(i + 1)))
             break;
         }
     }
     if (index_of_bet == 0) {
-        return console.log(colors.brightGreen(username__) + " | Offer " + colors.brightMagenta(offer) + " not found for account: " + colors.yellow(i))
+        return console.log(colors.brightYellow(colors.brightGreen(username__) + " | Offer " + colors.brightMagenta(offer) + " not found for account: " + colors.yellow(i + 1)))
     }
 
 
     //CREATING SELECTOR AND CLICKING ON A BET
     let conversion_bet = index_of_bet.toString()
     let conversion_side = side.toString()
+
+
     let bet_selector = "#root > div > div.App > div.live-layout.opened-event > div.live-layout__size > div > div.live-layout__event.wclay > div.live-match-singl > div:nth-child(4) > div:nth-child(" + conversion_bet + ") > div > div.sport-bet-odds__right > div:nth-child(" + conversion_side + ")"
     let selected_bet = await array_of_pages[i].waitForSelector(bet_selector);
 
@@ -354,15 +361,17 @@ async function place_bet(side, offer, i) {
     });
     if (is_selected == 0)                                              //CHECK IF BET IS SELECTED 
     {
-        return console.log(colors.brightYellow(username__ + " acc " + (i + 1) + " : Try again, bet is not selected."))        //NO
+        return console.log(colors.brightGreen(username__) + colors.brightRed(" | Try again, bet is not selected.") + colors.brightYellow("For account : " + (i + 1)))    //NO
+
 
     }
     else {
-        console.log(colors.brightYellow(username__ + " acc " + (i + 1) + " : Bet selected!"))         //YES
+        console.log(colors.brightGreen(username__) + colors.brightCyan(" | Bet selected!" + colors.brightYellow(" For account : " + (i + 1))))                                 //YES
+        console.log(colors.brightCyan("Processing..."))
     }
 
     if (availablemoney < bet_float) {
-        console.log(colors.brightYellow(username__ + " " + (i + 1) + " : Not enough money. Try again."))
+        console.log(colors.brightGreen(username__) + colors.brightYellow(" | Not enough money. For account : " + (i + 1)))
         await delay(0.1)
         await selected_bet.click()
         return;
@@ -373,6 +382,12 @@ async function place_bet(side, offer, i) {
     await searchInput.type(bet);
     await delay(0.3)
 
+    let payout = await array_of_pages[i].evaluate(() => {
+        var x = document.getElementsByClassName("wpossiblepayout__payout")[0].innerText
+        return (x)
+    });
+    //payout.slice(0,-2)
+
     //CONFIRM THE BET
     await array_of_pages[i].click('button[class = "btn--fill btn--checkout btn--xlarge "]');
     await array_of_pages[i].click('button[class = "btn--fill btn--checkout btn--xlarge "]');
@@ -381,21 +396,32 @@ async function place_bet(side, offer, i) {
     do {
         var isthrough = await array_of_pages[i].evaluate(() => {
             var x = document.getElementsByClassName("message-place-bet__main_bold").length;
-            return (x)                                                                          //CLICK ON A BET UNTIL IT IS SELECTED
+            return x                                                                         //WAIT UNTIL BET IS CONFIRMED
+        });
+
+        var check_if_bet_procceded = await array_of_pages[i].evaluate(() => {
+            var y = document.getElementsByClassName("wmsg wmsg__error wmsg_border").length;
+            return y;
         });
     }
-    while (isthrough == 0)
+    while (isthrough == 0 && check_if_bet_procceded == 0)
 
+    if (check_if_bet_procceded != 0) {
+        await array_of_pages[i].click('button[class = "btn--fill btn--accent btn--xlarge "]');
+        console.log(colors.green(username__) + colors.brightYellow(" | ") + colors.brightRed("Bet did not make it through. ") + colors.brightYellow("For account : " + (i + 1)))
+        return
+    }
 
-    //DESELECT BET
-
-    console.log(colors.magenta("\n " + username__ + " account " + (i + 1) + " :" + "\n -------------------------"))
-    console.log(colors.brightYellow("Paid ") + (colors.brightGreen("EUR " + "0.1")))
     var end = performance.now()
+
+    console.log(colors.magenta("\n " + username__ + " account " + (i + 1) + " : " + colors.brightGreen(money_string + " €") + "\n -------------------------"))
+    console.log(colors.brightYellow("Stake : ") + (colors.brightGreen("0.1 €")))
+    console.log(colors.brightYellow("Payout : ") + colors.brightGreen(payout))
     console.log(colors.brightYellow("Time 1 : ") + colors.brightCyan(`${((end1 - start1) / 1000).toFixed(2)} s`))
     console.log(colors.brightYellow("Time : ") + colors.brightCyan(`${((end - start) / 1000).toFixed(2)} s`))
-    console.log("\n\n")
+    //console.log("\n")
 
+    //DESELECT BET
     await selected_bet.click();
     await selected_bet.click();
 

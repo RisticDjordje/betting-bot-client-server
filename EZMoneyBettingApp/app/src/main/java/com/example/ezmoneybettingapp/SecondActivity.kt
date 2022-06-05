@@ -4,12 +4,14 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.Gravity
 import android.view.KeyEvent
+import android.view.MenuItem
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.PopupWindow
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import com.example.ezmoneybettingapp.SocketHandler.mSocket
 import org.json.JSONArray
 
 
@@ -172,7 +174,7 @@ class SecondActivity : AppCompatActivity() {
 
     }
 
-    // Overwriting volume control buttons
+    // Overwriting volume control buttons to click left and right
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
 
         when (keyCode) {
@@ -182,4 +184,17 @@ class SecondActivity : AppCompatActivity() {
         return true
     }
 
+    // Overwriting back button in action bar so it would reset the activity and disconnect the user
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == android.R.id.home) {
+            mSocket.disconnect()
+            val intent = Intent(this, MainActivity::class.java)
+            startActivity(intent)
+        }
+        return false
+    }
+
 }
+
+
+
