@@ -4,13 +4,13 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
-class OffersDialogFragment(
-    private val offer_titles: ArrayList<String>,
-    private val offer_names: ArrayList<String>
+class FundsDialogFragment(
+    val fundsList: ArrayList<String>
 ) : DialogFragment() {
 
 
@@ -32,9 +32,8 @@ class OffersDialogFragment(
         val rootView: View =
             inflater.inflate(R.layout.dialog_fragment_with_recycler_view, container, false)
 
-        val recyclerViewAdapter = RecyclerViewAdapter(offer_names)
+        val recyclerViewAdapter = RecyclerViewAdapter(fundsList)
         val offersList = rootView.findViewById<RecyclerView>(R.id.itemsList)
-        val mSocket = SocketHandler.getSocket()
 
         offersList.apply {
             // vertical layout
@@ -48,8 +47,6 @@ class OffersDialogFragment(
                     requireContext(),
                     offersList
                 ) { _, position ->
-                    mSocket.emit("offer_chosen", offer_titles[position], offer_names[position])
-                    dismiss()
                 })
         }
 

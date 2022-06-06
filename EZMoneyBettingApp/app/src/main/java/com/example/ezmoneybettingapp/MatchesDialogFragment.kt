@@ -31,15 +31,15 @@ class MatchesDialogFragment(
         val rootView: View =
             inflater.inflate(R.layout.dialog_fragment_with_recycler_view, container, false)
 
-        val offersAdapter = OffersAdapter(matchNames)
-        val offersList = rootView.findViewById<RecyclerView>(R.id.offersList)
+        val recyclerViewAdapter = RecyclerViewAdapter(matchNames)
+        val offersList = rootView.findViewById<RecyclerView>(R.id.itemsList)
         val mSocket = SocketHandler.getSocket()
 
         offersList.apply {
             // vertical layout
             layoutManager = LinearLayoutManager(requireContext())
             // set adapter
-            adapter = offersAdapter
+            adapter = recyclerViewAdapter
 
             // Touch handling
             offersList.addOnItemTouchListener(

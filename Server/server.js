@@ -1,6 +1,3 @@
-const express = require('express'); // requires express module
-const fs = require('fs');
-const app = express();
 var colors = require('colors');
 var http = require('http')
 const puppeteer = require('puppeteer');
@@ -11,9 +8,8 @@ const localtunnel = require('localtunnel');
 const cluster = require('cluster');
 const numCPUs = require('os').cpus().length;
 const { Server } = require('socket.io');
-const { setupMaster, setupWorker } = require("@socket.io/sticky");
+const { setupMaster, setupWorker } = require('@socket.io/sticky');
 const { createAdapter, setupPrimary } = require("@socket.io/cluster-adapter");
-
 
 // Setting delay with units in seconds         
 const delay = (n) => new Promise(r => setTimeout(r, n * 1000));
@@ -91,6 +87,8 @@ if (cluster.isMaster) {
     setupWorker(io);
 
     io.on('connection', async (socket) => {
+
+        var array_of_funds = []
         // Number of browsers
         var number_of_browsers;
         // Name of the match we want to bet on
@@ -215,6 +213,13 @@ if (cluster.isMaster) {
         socket.on('left_button', async () => {
             console.log(`W ${process.pid} | ${colors.brightGreen(username__)} pressed LEFT/OVER/YES button.`)
 
+            for (i = 0; i < number_of_browsers.length; i++) {
+                var money = await array_of_pages[i].$$eval("#novac", (money) =>
+                    money.map((option) => option.textContent));
+                var money_string = `${login_information[username__][i][0]} : ${colors.brightGreen(money[i])} €\n`
+                array_of_money_state.push(money_string)
+            }
+
             array_of_place_bets = []
             var offer = array_of_offers[index_of_offer]
 
@@ -274,6 +279,13 @@ if (cluster.isMaster) {
             var titles_of_bets = await find_offer_titles(0)
             var names_of_bets = await find_offer_names(0)
 
+            for (i = 0; i < titles_of_bets.length; i++) {
+                if (titles_of_bets[i] == "") {
+                    titles_of_bets.splice(i, 1)
+                    names_of_bets.splice(i, 1)
+                }
+            }
+
             // Sending current offers to the client
             socket.emit('current_offers', titles_of_bets, names_of_bets);
         })
@@ -311,12 +323,19 @@ if (cluster.isMaster) {
             socket.emit('match_clicked_received', match_title);
         })
 
+
+        // FUNDS BUTTON 
+        socket.on('funds_request', async () => {
+            console.log(`W ${process.pid} | ID: ${colors.yellow(socket.id)} requested to see his funds. Sending funds.`)
+
+            var current_funds = await find_funds(number_of_browsers, array_of_funds)
+
+            // Sending current matches to the client
+            socket.emit('current_funds', current_funds);
+        })
+
     });
 }
-
-
-const { isBoolean } = require('util');
-
 
 // FINDING ALL ACTIVE MATCHES
 async function find_matches() {
@@ -348,6 +367,17 @@ async function find_offer_names(i) {
     var names_of_bets = await array_of_pages[i].$$eval("div.sport-bet-odds__left", (names_of_bets) =>
         names_of_bets.map((option) => option.textContent));
     return names_of_bets
+}
+
+async function find_funds(number_of_browsers, array_of_funds) {
+    for (i = 0; i < number_of_browsers; i++) {
+        var money = await array_of_pages[i].$$eval("#novac", (money) =>
+            money.map((option) => option.textContent));
+        var money_string = login_information[username__][i][0] + " : " + money[0] + " €"
+        array_of_funds.push(money_string)
+    }
+    return console.log(array_of_funds)
+
 }
 
 
@@ -462,14 +492,13 @@ async function place_bet(side, offer, i) {
     console.log(colors.magenta(`\n ${username__} account ${(i + 1)} : ${colors.brightGreen(money_string + " €")}\n -------------------------`))
     console.log(colors.brightYellow(`Stake : ${colors.brightGreen("0.1 €")}`))
     console.log(colors.brightYellow(`Payout : ${colors.brightGreen(payout)}`))
-    console.log(colors.brightYellow("Time 1 : ") + colors.brightCyan(`${((end1 - start1) / 1000).toFixed(2)} s`))
-    console.log(colors.brightYellow("Time : ") + colors.brightCyan(`${((end - start) / 1000).toFixed(2)} s`))
-    //console.log("\n")
+    console.log(colors.brightYellow(`Time1 : + ${colors.brightCyan(((end1 - start1) / 1000).toFixed(2))} s`))
+    console.log(colors.brightYellow(`Time : ${colors.brightCyan(((end - start) / 1000).toFixed(2))} s`))
+
 
     //DESELECT BET
     await selected_bet.click();
     await selected_bet.click();
 
 }
-
 

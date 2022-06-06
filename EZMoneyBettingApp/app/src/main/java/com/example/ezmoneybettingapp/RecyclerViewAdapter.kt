@@ -7,8 +7,8 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
 
-class OffersAdapter(private val offersList: ArrayList<String>) :
-    RecyclerView.Adapter<OffersAdapter.ViewHolder>() {
+class RecyclerViewAdapter(private val offersList: ArrayList<String>) :
+    RecyclerView.Adapter<RecyclerViewAdapter.ViewHolder>() {
 
     // holder class to hold reference
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {

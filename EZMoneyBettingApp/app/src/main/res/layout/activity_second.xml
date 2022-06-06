@@ -31,20 +31,20 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:text="offers"
-        app:layout_constraintEnd_toStartOf="@+id/blackScreenBtn"
+        app:layout_constraintEnd_toStartOf="@+id/fundsBtn"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintHorizontal_chainStyle="spread"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/currentOfferTextView" />
 
     <Button
-        android:id="@+id/blackScreenBtn"
+        android:id="@+id/fundsBtn"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="32dp"
-        android:text="Black Screen"
+        android:text="Funds"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/offersBtn"
@@ -56,7 +56,7 @@
         android:layout_height="110dp"
         android:layout_marginStart="32dp"
         android:layout_marginEnd="6dp"
-        android:layout_marginBottom="75dp"
+        android:layout_marginBottom="45dp"
         android:text="left\nover\nyes"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/rightBtn"
@@ -69,7 +69,7 @@
         android:layout_height="110dp"
         android:layout_marginStart="6dp"
         android:layout_marginEnd="32dp"
-        android:layout_marginBottom="75dp"
+        android:layout_marginBottom="45dp"
         android:text="right\nunder\nno"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -80,12 +80,12 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginStart="32dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="32dp"
-        android:layout_marginBottom="20dp"
+        android:layout_marginBottom="8dp"
         android:layout_weight="1"
         android:background="#1D673AB7"
-        app:layout_constraintBottom_toTopOf="@+id/leftBtn"
+        app:layout_constraintBottom_toTopOf="@+id/blackScreenBtn"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/offersBtn">
@@ -101,6 +101,19 @@
             android:textSize="15sp" />
 
     </ScrollView>
+
+    <Button
+        android:id="@+id/blackScreenBtn"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginBottom="5dp"
+        android:text="black screen"
+        app:layout_constraintBottom_toTopOf="@+id/leftBtn"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
