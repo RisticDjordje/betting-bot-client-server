@@ -18,8 +18,8 @@ import org.json.JSONArray
 
 class SecondActivity : AppCompatActivity() {
 
-    lateinit var leftBtn: Button
-    lateinit var rightBtn: Button
+    private lateinit var leftBtn: Button
+    private lateinit var rightBtn: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,8 +40,8 @@ class SecondActivity : AppCompatActivity() {
 
         // Going back to first activity when the client is disconnected
         mSocket.on("disconnect") {
-            var mediaPlayer = MediaPlayer.create(this, R.raw.disconnectnotification)
-            mediaPlayer.start()
+            val mediaPlayerDisconnect = MediaPlayer.create(this, R.raw.disconnect)
+            mediaPlayerDisconnect.start()
             val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
             mSocket.disconnect()
@@ -217,7 +217,43 @@ class SecondActivity : AppCompatActivity() {
             }
         }
 
+        mSocket.on("offer_not_found") {
+            runOnUiThread {
+                val mediaPlayerFail = MediaPlayer.create(this, R.raw.fail)
+                mediaPlayerFail.start()
+                // Updating the CLIENT console
+                consoleLogCounter++
+                consoleLog.append("\n$consoleLogCounter | SERVER: Offer no longer available. Choose another one.")
+                consoleLog.append("\n------------------------------------------------------")
+            }
+        }
 
+        mSocket.on("offer_not_active") {
+            runOnUiThread {
+                val mediaPlayerFail = MediaPlayer.create(this, R.raw.fail)
+                mediaPlayerFail.start()
+                // Updating the CLIENT console
+                consoleLogCounter++
+                consoleLog.append("\n$consoleLogCounter | SERVER: This side of the offer not currently active. Try again.")
+                consoleLog.append("\n------------------------------------------------------")
+            }
+        }
+
+        mSocket.on("bet_success") { args ->
+            if (args[0] != null) {
+                val account = args[0]
+                val betAmount = args[1]
+                val potentialPayout = args[2]
+                runOnUiThread {
+                    // Updating the CLIENT console
+                    val mediaPlayerSuccess = MediaPlayer.create(this, R.raw.success)
+                    mediaPlayerSuccess.start()
+                    consoleLogCounter++
+                    consoleLog.append("\n$consoleLogCounter | SERVER: Successfully bet $betAmount € for account $account. Potential payout: $potentialPayout €.")
+                    consoleLog.append("\n------------------------------------------------------")
+                }
+            }
+        }
     }
 
     // Overwriting volume control buttons to click left and right

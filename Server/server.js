@@ -16,9 +16,9 @@ const delay = (n) => new Promise(r => setTimeout(r, n * 1000));
 
 function getRandomFloat(min, max, decimals) {
     const str = (Math.random() * (max - min) + min).toFixed(decimals);
-  
+
     return parseFloat(str);
-  }
+}
 
 var browser1, browser2, browser3, browser4;
 var page1, page2, page3, page4;
@@ -34,7 +34,7 @@ var index_of_offer = -1;
 // Login information
 var login_information = {
     relja: [["relja12345", "Relja15052002"], ["somi333", "srbija333"]],
-    somi: [["somi333", "srbija333"]],
+    somi: [["somi333", "srbija333"], ["relja12345", "Relja15052002"], ["djordjeristic", "DjordjeR81"]],
     djordje: [["djordjeristic", "DjordjeR81"]],
 };
 
@@ -218,27 +218,25 @@ if (cluster.isMaster) {
         socket.on('left_button', async () => {
             console.log(`W ${process.pid} | ${colors.brightGreen(username__)} pressed LEFT/OVER/YES button.`)
 
-            array_of_funds = []
             array_of_bets = []
-                for (i = 0; i < number_of_browsers; i++) {
-                    var money = await array_of_pages[i].$$eval("#novac", (money) =>
-                        money.map((option) => option.textContent));
-                    var money_value = parseFloat(money[0])
-                    //if(money_value > 45){ money_value = 45 }
-                    array_of_funds.push(money_value)
-                    //array_of_bets.push(Math.floor(money_value*getRandomFloat(0.85,0.95, 2)))
-                    array_of_bets.push(0.1)
-                }
-                console.log(array_of_bets)
+            for (i = 0; i < number_of_browsers; i++) {
+                var money = await array_of_pages[i].$$eval("#novac", (money) =>
+                    money.map((option) => option.textContent));
+                var money_value = parseFloat(money[0])
+                if (money_value > 45) { money_value = 45 }
+                array_of_bets.push(Math.floor(money_value * getRandomFloat(0.85, 0.95, 2)))
+                // array_of_bets.push(0.1)
+            }
+            console.log(array_of_bets)
 
             array_of_place_bets = []
             var offer = array_of_offers[index_of_offer]
 
             var array_of_functions_1 = [
-                function () { place_bet(1, offer, 0,array_of_bets[0]) },
-                function () { place_bet(1, offer, 1,array_of_bets[1]) },
-                function () { place_bet(1, offer, 2,array_of_bets[2]) },
-                function () { place_bet(1, offer, 3,array_of_bets[3]) }
+                function () { place_bet(1, offer, 0, array_of_bets[0]) },
+                function () { place_bet(1, offer, 1, array_of_bets[1]) },
+                function () { place_bet(1, offer, 2, array_of_bets[2]) },
+                function () { place_bet(1, offer, 3, array_of_bets[3]) }
             ]
 
             var sliced_array_of_functions = array_of_functions_1.splice(0, number_of_browsers)
@@ -259,27 +257,25 @@ if (cluster.isMaster) {
         socket.on('right_button', async () => {
             console.log(`W ${process.pid} | ${colors.brightGreen(username__)} pressed RIGHT/UNDER/NO button.`)
 
-            array_of_funds = []
             array_of_bets = []
-                for (i = 0; i < number_of_browsers; i++) {
-                    var money = await array_of_pages[i].$$eval("#novac", (money) =>
-                        money.map((option) => option.textContent));
-                    var money_value = parseFloat(money[0])
-                    //if(money_value > 45){ money_value = 45 }
-                    array_of_funds.push(money_value)
-                    //array_of_bets.push(Math.floor(money_value*getRandomFloat(0.85,0.95, 2)))
-                    array_of_bets.push(0.1)
-                }
-                console.log(array_of_bets)
+            for (i = 0; i < number_of_browsers; i++) {
+                var money = await array_of_pages[i].$$eval("#novac", (money) =>
+                    money.map((option) => option.textContent));
+                var money_value = parseFloat(money[0])
+                if (money_value > 45) { money_value = 45 }
+                array_of_bets.push(Math.floor(money_value * getRandomFloat(0.85, 0.95, 2)))
+                // array_of_bets.push(0.1)
+            }
+            console.log(array_of_bets)
 
             array_of_place_bets = []
             var offer = array_of_offers[index_of_offer]
 
             var array_of_functions_2 = [
-                function () { place_bet(2, offer, 0,array_of_bets[0]) },
-                function () { place_bet(2, offer, 1,array_of_bets[1]) },
-                function () { place_bet(2, offer, 2,array_of_bets[2]) },
-                function () { place_bet(2, offer, 3,array_of_bets[3]) }
+                function () { place_bet(2, offer, 0, array_of_bets[0]) },
+                function () { place_bet(2, offer, 1, array_of_bets[1]) },
+                function () { place_bet(2, offer, 2, array_of_bets[2]) },
+                function () { place_bet(2, offer, 3, array_of_bets[3]) }
             ]
 
             var sliced_array_of_functions = array_of_functions_2.splice(0, number_of_browsers)
@@ -425,8 +421,8 @@ async function place_bet(side, offer, i, bet) {
     var names_of_bets = await find_offer_names(0);
 
     if (titles_of_bets.includes(offer) == false) {
-        console.log(colors.brightRed("This offer is not active anymore."))
-        return
+        socket.emit('offer_not_found')
+        return console.log(`W ${process.pid} | ${colors.brightGreen(username__)} | ${colors.brightRed("Offer not found for account:")} ${i + 1}`)
     }
 
     for (j = 0; j < titles_of_bets.length; j++) {
@@ -438,10 +434,6 @@ async function place_bet(side, offer, i, bet) {
             break;
         }
     }
-    if (index_of_bet == 0) {
-        return console.log(colors.brightYellow(`W ${process.pid} | ${colors.brightGreen(username__)} | Offer ${colors.brightMagenta(offer)} not found for account: ${colors.yellow(i + 1)}`))
-    }
-
 
     //CREATING SELECTOR AND CLICKING ON A BET
     let conversion_bet = index_of_bet.toString()
@@ -459,9 +451,9 @@ async function place_bet(side, offer, i, bet) {
     });
     if (is_selected == 0)                                              //CHECK IF BET IS SELECTED 
     {
-        return console.log(`W ${colors.gray(process.pid)} | ${colors.brightGreen(username__)} ${colors.brightRed(" | Try again, bet is not selected.")} ${colors.brightYellow("For account : " + (i + 1))}`)   //NO
-
-
+        // This side of the offer or the offer is not currently active, try again.
+        socket.emit('offer_not_active')
+        return console.log(`W ${colors.gray(process.pid)} | ${colors.brightGreen(username__)} ${colors.brightRed(" | Try again, bet is not selected.")} ${colors.brightYellow("For account : " + (i + 1))}`)
     }
     else {
         console.log(`W ${colors.gray(process.pid)} | ${colors.brightGreen(username__)} ${colors.brightCyan(" | Bet selected!" + colors.brightYellow(" For account : " + (i + 1)))}`)                                 //YES
@@ -469,6 +461,7 @@ async function place_bet(side, offer, i, bet) {
     }
 
     if (availablemoney < bet) {
+        // Probably can not happen
         console.log(colors.brightGreen(username__) + colors.brightYellow(" | Not enough money. For account : " + (i + 1)))
         await delay(0.1)
         await selected_bet.click()
@@ -505,6 +498,8 @@ async function place_bet(side, offer, i, bet) {
     while (isthrough == 0 && check_if_bet_procceded == 0)
 
     if (check_if_bet_procceded != 0) {
+        // Bet failed. Try again.
+        socket.emit('bet_failed')
         await array_of_pages[i].click('button[class = "btn--fill btn--accent btn--xlarge "]');
         console.log(`W ${colors.gray(process.pid)} | ${colors.green(username__)} ${colors.brightYellow(" | ")} ${colors.brightRed("Bet did not make it through. ")} ${colors.brightYellow("For account : " + (i + 1))}`)
         return
@@ -515,9 +510,10 @@ async function place_bet(side, offer, i, bet) {
     console.log(colors.magenta(`\n ${username__} account ${(i + 1)} : ${colors.brightGreen(money_string + " €")}\n -------------------------`))
     console.log(colors.brightYellow(`Stake : ${colors.brightGreen(bet + " €")}`))
     console.log(colors.brightYellow(`Payout : ${colors.brightGreen(payout)}`))
-    console.log(colors.brightYellow(`Time1 : + ${colors.brightCyan(((end1 - start1) / 1000).toFixed(2)+ " s")}`))
-    console.log(colors.brightYellow(`Time : ${colors.brightCyan(((end - start) / 1000).toFixed(2)+ " s")}`))
-
+    console.log(colors.brightYellow(`Time1 : + ${colors.brightCyan(((end1 - start1) / 1000).toFixed(2) + " s")}`))
+    console.log(colors.brightYellow(`Time : ${colors.brightCyan(((end - start) / 1000).toFixed(2) + " s")}`))
+    // Bet was successful
+    socket.emit('bet_success', i, bet, payout)
 
     //DESELECT BET
     await selected_bet.click();

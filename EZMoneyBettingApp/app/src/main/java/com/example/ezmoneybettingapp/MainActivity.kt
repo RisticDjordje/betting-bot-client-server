@@ -115,7 +115,7 @@ class MainActivity : AppCompatActivity() {
                     isMatchChosen = true
                     // Updating the CLIENT console
                     consoleLogCounter++
-                    consoleLog.append("\n$consoleLogCounter | SERVER: Received chosen match: ${matchChosen}")
+                    consoleLog.append("\n$consoleLogCounter | SERVER: Received chosen match: $matchChosen")
                     consoleLog.append("\n------------------------------------------------------")
                     matchNameTextView.text = matchChosen
                 }
