@@ -14,6 +14,12 @@ const { createAdapter, setupPrimary } = require("@socket.io/cluster-adapter");
 // Setting delay with units in seconds         
 const delay = (n) => new Promise(r => setTimeout(r, n * 1000));
 
+function getRandomFloat(min, max, decimals) {
+    const str = (Math.random() * (max - min) + min).toFixed(decimals);
+  
+    return parseFloat(str);
+  }
+
 var browser1, browser2, browser3, browser4;
 var page1, page2, page3, page4;
 
@@ -134,7 +140,7 @@ if (cluster.isMaster) {
 
                 for (i = 0; i < number_of_browsers; i++) {
 
-                    array_of_browsers[i] = await puppeteer.launch({ headless: true });
+                    array_of_browsers[i] = await puppeteer.launch({ headless: false });
                     array_of_pages[i] = await array_of_browsers[i].newPage();
 
                     await array_of_pages[i].goto('https://wwin.com/');
@@ -212,21 +218,27 @@ if (cluster.isMaster) {
         socket.on('left_button', async () => {
             console.log(`W ${process.pid} | ${colors.brightGreen(username__)} pressed LEFT/OVER/YES button.`)
 
-            for (i = 0; i < number_of_browsers.length; i++) {
-                var money = await array_of_pages[i].$$eval("#novac", (money) =>
-                    money.map((option) => option.textContent));
-                var money_string = `${login_information[username__][i][0]} : ${colors.brightGreen(money[i])} €\n`
-                array_of_money_state.push(money_string)
-            }
+            array_of_funds = []
+            array_of_bets = []
+                for (i = 0; i < number_of_browsers; i++) {
+                    var money = await array_of_pages[i].$$eval("#novac", (money) =>
+                        money.map((option) => option.textContent));
+                    var money_value = parseFloat(money[0])
+                    //if(money_value > 45){ money_value = 45 }
+                    array_of_funds.push(money_value)
+                    //array_of_bets.push(Math.floor(money_value*getRandomFloat(0.85,0.95, 2)))
+                    array_of_bets.push(0.1)
+                }
+                console.log(array_of_bets)
 
             array_of_place_bets = []
             var offer = array_of_offers[index_of_offer]
 
             var array_of_functions_1 = [
-                function () { place_bet(1, offer, 0) },
-                function () { place_bet(1, offer, 1) },
-                function () { place_bet(1, offer, 2) },
-                function () { place_bet(1, offer, 3) }
+                function () { place_bet(1, offer, 0,array_of_bets[0]) },
+                function () { place_bet(1, offer, 1,array_of_bets[1]) },
+                function () { place_bet(1, offer, 2,array_of_bets[2]) },
+                function () { place_bet(1, offer, 3,array_of_bets[3]) }
             ]
 
             var sliced_array_of_functions = array_of_functions_1.splice(0, number_of_browsers)
@@ -247,14 +259,27 @@ if (cluster.isMaster) {
         socket.on('right_button', async () => {
             console.log(`W ${process.pid} | ${colors.brightGreen(username__)} pressed RIGHT/UNDER/NO button.`)
 
+            array_of_funds = []
+            array_of_bets = []
+                for (i = 0; i < number_of_browsers; i++) {
+                    var money = await array_of_pages[i].$$eval("#novac", (money) =>
+                        money.map((option) => option.textContent));
+                    var money_value = parseFloat(money[0])
+                    //if(money_value > 45){ money_value = 45 }
+                    array_of_funds.push(money_value)
+                    //array_of_bets.push(Math.floor(money_value*getRandomFloat(0.85,0.95, 2)))
+                    array_of_bets.push(0.1)
+                }
+                console.log(array_of_bets)
+
             array_of_place_bets = []
             var offer = array_of_offers[index_of_offer]
 
             var array_of_functions_2 = [
-                function () { place_bet(2, offer, 0) },
-                function () { place_bet(2, offer, 1) },
-                function () { place_bet(2, offer, 2) },
-                function () { place_bet(2, offer, 3) }
+                function () { place_bet(2, offer, 0,array_of_bets[0]) },
+                function () { place_bet(2, offer, 1,array_of_bets[1]) },
+                function () { place_bet(2, offer, 2,array_of_bets[2]) },
+                function () { place_bet(2, offer, 3,array_of_bets[3]) }
             ]
 
             var sliced_array_of_functions = array_of_functions_2.splice(0, number_of_browsers)
@@ -381,10 +406,9 @@ async function find_funds(number_of_browsers) {
 
 
 // FUNCTION FOR PLACING BETS
-async function place_bet(side, offer, i) {
+async function place_bet(side, offer, i, bet) {
     var index_of_bet = 0
-    var bet = "0.1";
-    var bet_float = parseFloat(bet);
+    var bet_string = bet.toString();
 
     var money = await array_of_pages[i].$$eval("#novac", (money) =>
         money.map((option) => option.textContent));
@@ -410,12 +434,12 @@ async function place_bet(side, offer, i) {
         if (titles_of_bets[j] == offer) {
             index_of_bet = j;
             index_of_bet++
-            console.log(colors.brightYellow(`W ${colors.gray(process.pid)} | ${colors.brightGreen(username__)} | Offer ${colors.brightMagenta(names_of_bets[j])} found for account: ${colors.yellow(i + 1)}`))
+            console.log(colors.brightYellow(`W ${process.pid} | ${colors.brightGreen(username__)} | Offer ${colors.brightMagenta(names_of_bets[j])} found for account: ${colors.yellow(i + 1)}`))
             break;
         }
     }
     if (index_of_bet == 0) {
-        return console.log(colors.brightYellow(`W ${colors.gray(process.pid)} | ${colors.brightGreen(username__)} | Offer ${colors.brightMagenta(offer)} not found for account: ${colors.yellow(i + 1)}`))
+        return console.log(colors.brightYellow(`W ${process.pid} | ${colors.brightGreen(username__)} | Offer ${colors.brightMagenta(offer)} not found for account: ${colors.yellow(i + 1)}`))
     }
 
 
@@ -444,7 +468,7 @@ async function place_bet(side, offer, i) {
         console.log(`W ${colors.gray(process.pid)} | ${colors.brightCyan("Processing...")}`)
     }
 
-    if (availablemoney < bet_float) {
+    if (availablemoney < bet) {
         console.log(colors.brightGreen(username__) + colors.brightYellow(" | Not enough money. For account : " + (i + 1)))
         await delay(0.1)
         await selected_bet.click()
@@ -453,7 +477,7 @@ async function place_bet(side, offer, i) {
 
     let searchInput = await array_of_pages[i].$('input[class="wstake__input"]');
     await searchInput.click({ clickCount: 2 });
-    await searchInput.type(bet);
+    await searchInput.type(bet_string);
     await delay(0.3)
 
     let payout = await array_of_pages[i].evaluate(() => {
@@ -489,10 +513,10 @@ async function place_bet(side, offer, i) {
     var end = performance.now()
 
     console.log(colors.magenta(`\n ${username__} account ${(i + 1)} : ${colors.brightGreen(money_string + " €")}\n -------------------------`))
-    console.log(colors.brightYellow(`Stake : ${colors.brightGreen("0.1 €")}`))
+    console.log(colors.brightYellow(`Stake : ${colors.brightGreen(bet + " €")}`))
     console.log(colors.brightYellow(`Payout : ${colors.brightGreen(payout)}`))
-    console.log(colors.brightYellow(`Time1 : + ${colors.brightCyan(((end1 - start1) / 1000).toFixed(2))} s`))
-    console.log(colors.brightYellow(`Time : ${colors.brightCyan(((end - start) / 1000).toFixed(2))} s`))
+    console.log(colors.brightYellow(`Time1 : + ${colors.brightCyan(((end1 - start1) / 1000).toFixed(2)+ " s")}`))
+    console.log(colors.brightYellow(`Time : ${colors.brightCyan(((end - start) / 1000).toFixed(2)+ " s")}`))
 
 
     //DESELECT BET
@@ -500,4 +524,3 @@ async function place_bet(side, offer, i) {
     await selected_bet.click();
 
 }
-
