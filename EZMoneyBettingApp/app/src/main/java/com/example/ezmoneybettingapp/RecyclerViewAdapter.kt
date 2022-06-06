@@ -20,7 +20,7 @@ class RecyclerViewAdapter(private val offersList: ArrayList<String>) :
         // create view holder to hold reference
         return ViewHolder(
             LayoutInflater.from(parent.context)
-                .inflate(R.layout.match_recyclerview_row, parent, false)
+                .inflate(R.layout.recyclerview_row, parent, false)
         )
     }
 

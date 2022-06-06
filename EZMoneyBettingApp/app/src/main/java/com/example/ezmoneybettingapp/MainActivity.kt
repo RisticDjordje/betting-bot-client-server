@@ -58,6 +58,9 @@ class MainActivity : AppCompatActivity() {
         mSocket.on("disconnect") {
             val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
+            mSocket.disconnect()
+            isConnected = false
+            finish()
         }
 
 
@@ -200,7 +203,7 @@ class MainActivity : AppCompatActivity() {
                         val intent = Intent(this, SecondActivity::class.java)
                         startActivity(intent)
                         finish()
-                    }, 3000)
+                    }, 500)
                 }
             }
         }

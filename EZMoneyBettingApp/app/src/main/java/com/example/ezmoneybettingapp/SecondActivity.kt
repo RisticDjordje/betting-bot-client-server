@@ -1,6 +1,7 @@
 package com.example.ezmoneybettingapp
 
 import android.content.Intent
+import android.media.MediaPlayer
 import android.os.Bundle
 import android.view.Gravity
 import android.view.KeyEvent
@@ -28,17 +29,22 @@ class SecondActivity : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         // VARIABLES
-        val blackScreenBtn = findViewById<Button>(R.id.blackScreenBtn)
         val offersBtn = findViewById<Button>(R.id.offersBtn)
+        val fundsBtn = findViewById<Button>(R.id.fundsBtn)
         val currentOfferTextView = findViewById<TextView>(R.id.currentOfferTextView)
         val consoleLog = findViewById<TextView>(R.id.consoleLogTextView2nd)
+        val blackScreenBtn = findViewById<Button>(R.id.blackScreenBtn)
         var consoleLogCounter = 0
         var isOfferChosen = false
 
+
         // Going back to first activity when the client is disconnected
         mSocket.on("disconnect") {
+            var mediaPlayer = MediaPlayer.create(this, R.raw.disconnectnotification)
+            mediaPlayer.start()
             val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
+            mSocket.disconnect()
             finish()
         }
 
@@ -93,6 +99,45 @@ class SecondActivity : AppCompatActivity() {
                     consoleLog.append("\n$consoleLogCounter | SERVER: Received offer: ${args[0]}")
                     consoleLog.append("\n------------------------------------------------------")
                     currentOfferTextView.text = args[0].toString()
+                }
+            }
+        }
+
+
+        // FUNDS BUTTON
+        fundsBtn.setOnClickListener {
+            mSocket.emit("funds_request")
+            currentOfferTextView.text = "Requesting funds"
+            if (consoleLog.text.isEmpty()) {
+                consoleLogCounter++
+                consoleLog.append("$consoleLogCounter | CLIENT: Requesting current available funds from server.")
+            } else {
+                consoleLogCounter++
+                consoleLog.append("\n$consoleLogCounter | CLIENT: Requesting current available funds from server.")
+            }
+        }
+
+        // Server sending current available funds
+        mSocket.on("current_funds") { args ->
+            if (args[0] != null) {
+                runOnUiThread {
+                    val fundsList = ArrayList<String>()
+
+                    val jsFundsList = args[0] as JSONArray?
+
+                    if (jsFundsList != null) {
+                        for (i in 0 until jsFundsList.length()) {
+                            fundsList.add(jsFundsList.getString(i))
+                        }
+                    }
+
+                    val dialog = FundsDialogFragment(fundsList)
+                    dialog.show(supportFragmentManager, "fundsDialog")
+
+                    // Updating the CLIENT console
+                    consoleLogCounter++
+                    consoleLog.append("\n$consoleLogCounter | SERVER: Current available funds given.")
+                    consoleLog.append("\n------------------------------------------------------")
                 }
             }
         }

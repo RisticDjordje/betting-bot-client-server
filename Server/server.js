@@ -88,7 +88,6 @@ if (cluster.isMaster) {
 
     io.on('connection', async (socket) => {
 
-        var array_of_funds = []
         // Number of browsers
         var number_of_browsers;
         // Name of the match we want to bet on
@@ -135,7 +134,7 @@ if (cluster.isMaster) {
 
                 for (i = 0; i < number_of_browsers; i++) {
 
-                    array_of_browsers[i] = await puppeteer.launch({ headless: false });
+                    array_of_browsers[i] = await puppeteer.launch({ headless: true });
                     array_of_pages[i] = await array_of_browsers[i].newPage();
 
                     await array_of_pages[i].goto('https://wwin.com/');
@@ -328,18 +327,17 @@ if (cluster.isMaster) {
         socket.on('funds_request', async () => {
             console.log(`W ${process.pid} | ID: ${colors.yellow(socket.id)} requested to see his funds. Sending funds.`)
 
-            var current_funds = await find_funds(number_of_browsers, array_of_funds)
+            var current_funds = await find_funds(number_of_browsers)
 
             // Sending current matches to the client
             socket.emit('current_funds', current_funds);
         })
-
     });
 }
 
 // FINDING ALL ACTIVE MATCHES
 async function find_matches() {
-    var browser = await puppeteer.launch({ headless: false });
+    var browser = await puppeteer.launch({ headless: true });
     var page = await browser.newPage();
 
     await page.goto('https://wwin.com/live/#/');
@@ -369,14 +367,15 @@ async function find_offer_names(i) {
     return names_of_bets
 }
 
-async function find_funds(number_of_browsers, array_of_funds) {
+async function find_funds(number_of_browsers) {
+    array_of_funds = []
     for (i = 0; i < number_of_browsers; i++) {
         var money = await array_of_pages[i].$$eval("#novac", (money) =>
             money.map((option) => option.textContent));
         var money_string = login_information[username__][i][0] + " : " + money[0] + " €"
         array_of_funds.push(money_string)
     }
-    return console.log(array_of_funds)
+    return array_of_funds
 
 }
 
