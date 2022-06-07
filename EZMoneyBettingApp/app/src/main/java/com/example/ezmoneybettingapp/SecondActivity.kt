@@ -217,24 +217,24 @@ class SecondActivity : AppCompatActivity() {
             }
         }
 
-        mSocket.on("offer_not_found") {
+        mSocket.on("offer_not_found") {args ->
             runOnUiThread {
                 val mediaPlayerFail = MediaPlayer.create(this, R.raw.fail)
                 mediaPlayerFail.start()
                 // Updating the CLIENT console
                 consoleLogCounter++
-                consoleLog.append("\n$consoleLogCounter | SERVER: Offer no longer available. Choose another one.")
+                consoleLog.append("\n$consoleLogCounter | SERVER: Account ${args[0]}. Offer no longer available. Choose another one.")
                 consoleLog.append("\n------------------------------------------------------")
             }
         }
 
-        mSocket.on("offer_not_active") {
+        mSocket.on("offer_not_active") {args ->
             runOnUiThread {
                 val mediaPlayerFail = MediaPlayer.create(this, R.raw.fail)
                 mediaPlayerFail.start()
                 // Updating the CLIENT console
                 consoleLogCounter++
-                consoleLog.append("\n$consoleLogCounter | SERVER: This side of the offer not currently active. Try again.")
+                consoleLog.append("\n$consoleLogCounter | SERVER: Account ${args[0]}. This side of the offer not currently active. Try again.")
                 consoleLog.append("\n------------------------------------------------------")
             }
         }
@@ -249,7 +249,7 @@ class SecondActivity : AppCompatActivity() {
                     val mediaPlayerSuccess = MediaPlayer.create(this, R.raw.success)
                     mediaPlayerSuccess.start()
                     consoleLogCounter++
-                    consoleLog.append("\n$consoleLogCounter | SERVER: Successfully bet $betAmount € for account $account. Potential payout: $potentialPayout €.")
+                    consoleLog.append("\n$consoleLogCounter | SERVER: Account $account. Successfully bet $betAmount €. Potential payout: $potentialPayout")
                     consoleLog.append("\n------------------------------------------------------")
                 }
             }

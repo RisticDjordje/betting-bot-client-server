@@ -140,7 +140,7 @@ if (cluster.isMaster) {
 
                 for (i = 0; i < number_of_browsers; i++) {
 
-                    array_of_browsers[i] = await puppeteer.launch({ headless: false });
+                    array_of_browsers[i] = await puppeteer.launch({ headless: true });
                     array_of_pages[i] = await array_of_browsers[i].newPage();
 
                     await array_of_pages[i].goto('https://wwin.com/');
@@ -227,16 +227,15 @@ if (cluster.isMaster) {
                 array_of_bets.push(Math.floor(money_value * getRandomFloat(0.85, 0.95, 2)))
                 // array_of_bets.push(0.1)
             }
-            console.log(array_of_bets)
 
             array_of_place_bets = []
             var offer = array_of_offers[index_of_offer]
 
             var array_of_functions_1 = [
-                function () { place_bet(1, offer, 0, array_of_bets[0]) },
-                function () { place_bet(1, offer, 1, array_of_bets[1]) },
-                function () { place_bet(1, offer, 2, array_of_bets[2]) },
-                function () { place_bet(1, offer, 3, array_of_bets[3]) }
+                function () { place_bet(socket, 1, offer, 0, array_of_bets[0]) },
+                function () { place_bet(socket, 1, offer, 1, array_of_bets[1]) },
+                function () { place_bet(socket, 1, offer, 2, array_of_bets[2]) },
+                function () { place_bet(socket, 1, offer, 3, array_of_bets[3]) }
             ]
 
             var sliced_array_of_functions = array_of_functions_1.splice(0, number_of_browsers)
@@ -255,8 +254,6 @@ if (cluster.isMaster) {
 
         // RIGHT BUTTON
         socket.on('right_button', async () => {
-            console.log(`W ${process.pid} | ${colors.brightGreen(username__)} pressed RIGHT/UNDER/NO button.`)
-
             array_of_bets = []
             for (i = 0; i < number_of_browsers; i++) {
                 var money = await array_of_pages[i].$$eval("#novac", (money) =>
@@ -266,16 +263,15 @@ if (cluster.isMaster) {
                 array_of_bets.push(Math.floor(money_value * getRandomFloat(0.85, 0.95, 2)))
                 // array_of_bets.push(0.1)
             }
-            console.log(array_of_bets)
 
             array_of_place_bets = []
             var offer = array_of_offers[index_of_offer]
 
             var array_of_functions_2 = [
-                function () { place_bet(2, offer, 0, array_of_bets[0]) },
-                function () { place_bet(2, offer, 1, array_of_bets[1]) },
-                function () { place_bet(2, offer, 2, array_of_bets[2]) },
-                function () { place_bet(2, offer, 3, array_of_bets[3]) }
+                function () { place_bet(socket, 2, offer, 0, array_of_bets[0]) },
+                function () { place_bet(socket, 2, offer, 1, array_of_bets[1]) },
+                function () { place_bet(socket, 2, offer, 2, array_of_bets[2]) },
+                function () { place_bet(socket, 2, offer, 3, array_of_bets[3]) }
             ]
 
             var sliced_array_of_functions = array_of_functions_2.splice(0, number_of_browsers)
@@ -285,7 +281,7 @@ if (cluster.isMaster) {
             }
 
             await Promise.all([array_of_place_bets])
-
+            console.log(`W ${process.pid} | ${colors.brightGreen(username__)} pressed RIGHT/UNDER/NO button.`)
             // Letting the Client know LEFT has been received
             socket.emit('right_button_received');
         })
@@ -402,7 +398,7 @@ async function find_funds(number_of_browsers) {
 
 
 // FUNCTION FOR PLACING BETS
-async function place_bet(side, offer, i, bet) {
+async function place_bet(socket, side, offer, i, bet) {
     var index_of_bet = 0
     var bet_string = bet.toString();
 
@@ -421,7 +417,7 @@ async function place_bet(side, offer, i, bet) {
     var names_of_bets = await find_offer_names(0);
 
     if (titles_of_bets.includes(offer) == false) {
-        socket.emit('offer_not_found')
+        socket.emit('offer_not_found', i + 1)
         return console.log(`W ${process.pid} | ${colors.brightGreen(username__)} | ${colors.brightRed("Offer not found for account:")} ${i + 1}`)
     }
 
@@ -452,7 +448,7 @@ async function place_bet(side, offer, i, bet) {
     if (is_selected == 0)                                              //CHECK IF BET IS SELECTED 
     {
         // This side of the offer or the offer is not currently active, try again.
-        socket.emit('offer_not_active')
+        socket.emit('offer_not_active', i + 1)
         return console.log(`W ${colors.gray(process.pid)} | ${colors.brightGreen(username__)} ${colors.brightRed(" | Try again, bet is not selected.")} ${colors.brightYellow("For account : " + (i + 1))}`)
     }
     else {
@@ -513,7 +509,7 @@ async function place_bet(side, offer, i, bet) {
     console.log(colors.brightYellow(`Time1 : + ${colors.brightCyan(((end1 - start1) / 1000).toFixed(2) + " s")}`))
     console.log(colors.brightYellow(`Time : ${colors.brightCyan(((end - start) / 1000).toFixed(2) + " s")}`))
     // Bet was successful
-    socket.emit('bet_success', i, bet, payout)
+    socket.emit('bet_success', i + 1, bet, payout)
 
     //DESELECT BET
     await selected_bet.click();
