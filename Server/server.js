@@ -34,8 +34,9 @@ var index_of_offer = -1;
 // Login information
 var login_information = {
     relja: [["relja12345", "Relja15052002"], ["somi333", "srbija333"]],
-    somi: [["somi333", "srbija333"], ["relja12345", "Relja15052002"], ["djordjeristic", "DjordjeR81"]],
-    djordje: [["djordjeristic", "DjordjeR81"]],
+    somi: [["somi333", "srbija333"], ["relja12345", "Relja15052002"], ["teica123", "tea12345"], ["djordjeristic", "DjordjeR81"]],
+    dj: [["djordjeristic", "DjordjeR81"]],
+    fr: [["test", "fasdfasd"]]
 };
 
 
@@ -224,7 +225,7 @@ if (cluster.isMaster) {
                     money.map((option) => option.textContent));
                 var money_value = parseFloat(money[0])
                 if (money_value > 45) { money_value = 45 }
-                array_of_bets.push(Math.floor(money_value * getRandomFloat(0.85, 0.95, 2)))
+                array_of_bets.push(Math.floor(money_value * getRandomFloat(0.80, 1, 2)))
                 // array_of_bets.push(0.1)
             }
 
@@ -260,7 +261,7 @@ if (cluster.isMaster) {
                     money.map((option) => option.textContent));
                 var money_value = parseFloat(money[0])
                 if (money_value > 45) { money_value = 45 }
-                array_of_bets.push(Math.floor(money_value * getRandomFloat(0.85, 0.95, 2)))
+                array_of_bets.push(Math.floor(money_value * getRandomFloat(0.8, 1, 2)))
                 // array_of_bets.push(0.1)
             }
 
