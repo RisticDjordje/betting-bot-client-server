@@ -101,6 +101,8 @@ if (cluster.isMaster) {
         var match_title;
         // Boolean to store whether user is logged in or not
         var is_logged_in = false;
+        // Variable to store the current selected site (the base is Wwin, will change to Meridian on user's click)
+        var current_chosen_site = "Wwin";
 
         // When a new Client connection is opened.
         console.log(`W ${process.pid} | New socket connection: ${colors.yellow(socket.id)}`)
@@ -125,6 +127,14 @@ if (cluster.isMaster) {
         });
 
 
+        // CHANGE SITE BUTTON
+        socket.on('site_chosen', async (site_chosen) => {
+            current_chosen_site = site_chosen;
+            console.log(`W ${process.pid} | ID: ${colors.yellow(socket.id)} changed site to ${colors.cyan(current_chosen_site)}`)
+            socket.emit('site_chosen_received')
+        });
+
+
         // LOGIN BUTTON
         socket.on('login', async (username) => {
             username__ = username
@@ -141,7 +151,7 @@ if (cluster.isMaster) {
 
                 for (i = 0; i < number_of_browsers; i++) {
 
-                    array_of_browsers[i] = await puppeteer.launch({ headless: true });
+                    array_of_browsers[i] = await puppeteer.launch({ headless: false, args: ['--disable-dev-shm-usage'] });
                     array_of_pages[i] = await array_of_browsers[i].newPage();
 
                     await array_of_pages[i].goto('https://wwin.com/');
@@ -244,6 +254,7 @@ if (cluster.isMaster) {
             for (i = 0; i < sliced_array_of_functions.length; i++) {
                 array_of_place_bets.push(sliced_array_of_functions[i]());
             }
+
 
             await Promise.all([array_of_place_bets])
 

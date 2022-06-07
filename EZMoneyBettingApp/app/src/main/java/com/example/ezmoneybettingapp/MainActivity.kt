@@ -26,6 +26,9 @@ class MainActivity : AppCompatActivity() {
         val matchNameTextView = findViewById<TextView>(R.id.matchNameTextView)
         val username = findViewById<TextView>(R.id.username)
         val consoleLog = findViewById<TextView>(R.id.consoleLogTextView)
+        var changeSiteBtn = findViewById<Button>(R.id.changeSiteBtn)
+        var currentSiteTextView = findViewById<TextView>(R.id.currentSiteTextView)
+        var siteChosen = "Wwin"
         var consoleLogCounter = 1
         var isMatchChosen = false
         var isConnected = false
@@ -61,6 +64,34 @@ class MainActivity : AppCompatActivity() {
             mSocket.disconnect()
             isConnected = false
             finish()
+        }
+
+
+        // CHOOSE MATCH
+        changeSiteBtn.setOnClickListener {
+            if (isConnected) {
+                if (siteChosen == "Wwin") {
+                    siteChosen = "Meridian"
+                } else {
+                    siteChosen = "Wwin"
+                }
+                mSocket.emit("site_chosen", siteChosen)
+                currentSiteTextView.text = siteChosen
+                consoleLogCounter++
+                consoleLog.append("\n$consoleLogCounter | CLIENT: Change to $siteChosen sent to server.")
+            } else
+            {
+                consoleLogCounter++
+                consoleLog.append("\n$consoleLogCounter | CLIENT: You firstly have to connect to the server.")
+            }
+        }
+
+        mSocket.on("site_chosen_received"){
+            runOnUiThread {
+                consoleLogCounter++
+                consoleLog.append("\n$consoleLogCounter | SERVER: Site change received.")
+                consoleLog.append("\n------------------------------------------------------")
+            }
         }
 
 
@@ -203,7 +234,7 @@ class MainActivity : AppCompatActivity() {
                         val intent = Intent(this, SecondActivity::class.java)
                         startActivity(intent)
                         finish()
-                    }, 500)
+                    }, 50)
                 }
             }
         }
