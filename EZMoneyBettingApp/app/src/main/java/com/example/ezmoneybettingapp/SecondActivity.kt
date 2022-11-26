@@ -34,6 +34,7 @@ class SecondActivity : AppCompatActivity() {
         val currentOfferTextView = findViewById<TextView>(R.id.currentOfferTextView)
         val consoleLog = findViewById<TextView>(R.id.consoleLogTextView2nd)
         val blackScreenBtn = findViewById<Button>(R.id.blackScreenBtn)
+        val clearTicketBtn = findViewById<Button>(R.id.clearTicketBtn)
         var consoleLogCounter = 0
         var isOfferChosen = false
 
@@ -104,6 +105,40 @@ class SecondActivity : AppCompatActivity() {
         }
 
 
+        // CLEAR TICKET BUTTON
+        clearTicketBtn.setOnClickListener {
+            mSocket.emit("clear_ticket_request")
+            // Updating the CLIENT console
+            consoleLogCounter++
+            consoleLog.append("\n$consoleLogCounter | CLIENT: Clearing offer.")
+        }
+
+        mSocket.on("ticket_cleared") {
+            runOnUiThread {
+                // Updating the CLIENT console
+                consoleLogCounter++
+                consoleLog.append("\n$consoleLogCounter | SERVER: Ticket cleared.")
+                consoleLog.append("\n------------------------------------------------------")
+            }
+        }
+
+
+        // BLACK SCREEN BUTTON
+        blackScreenBtn.setOnClickListener {
+            val view = layoutInflater.inflate(R.layout.blackscreen_popup, null, false)
+            val popupWindow = PopupWindow(
+                view,
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT
+            )
+            popupWindow.showAtLocation(view, Gravity.CENTER, 0, 0)
+            val popupLayoutImageView = view.findViewById<ImageView>(R.id.popupLayoutImageView)
+            popupLayoutImageView.setOnClickListener {
+                popupWindow.dismiss()
+            }
+        }
+
+
         // FUNDS BUTTON
         fundsBtn.setOnClickListener {
             mSocket.emit("funds_request")
@@ -139,22 +174,6 @@ class SecondActivity : AppCompatActivity() {
                     consoleLog.append("\n$consoleLogCounter | SERVER: Current available funds given.")
                     consoleLog.append("\n------------------------------------------------------")
                 }
-            }
-        }
-
-
-        // BLACK SCREEN BUTTON
-        blackScreenBtn.setOnClickListener {
-            val view = layoutInflater.inflate(R.layout.blackscreen_popup, null, false)
-            val popupWindow = PopupWindow(
-                view,
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.MATCH_PARENT
-            )
-            popupWindow.showAtLocation(view, Gravity.CENTER, 0, 0)
-            val popupLayoutImageView = view.findViewById<ImageView>(R.id.popupLayoutImageView)
-            popupLayoutImageView.setOnClickListener {
-                popupWindow.dismiss()
             }
         }
 

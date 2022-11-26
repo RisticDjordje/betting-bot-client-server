@@ -12,14 +12,15 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
-        android:layout_marginTop="35dp"
+        android:layout_marginTop="32dp"
         android:layout_marginEnd="32dp"
-        android:background="#1D673AB7"
+        android:background="@color/grey_darker"
         android:gravity="center"
         android:text="No offer chosen"
         android:textColor="#000000"
         android:textSize="22sp"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -31,20 +32,20 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:text="offers"
-        app:layout_constraintEnd_toStartOf="@+id/fundsBtn"
+        app:layout_constraintEnd_toStartOf="@+id/clearTicketBtn"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintHorizontal_chainStyle="spread"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/currentOfferTextView" />
 
     <Button
-        android:id="@+id/fundsBtn"
+        android:id="@+id/clearTicketBtn"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="32dp"
-        android:text="Funds"
+        android:text=" Clear Ticket"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/offersBtn"
@@ -84,7 +85,7 @@
         android:layout_marginEnd="32dp"
         android:layout_marginBottom="8dp"
         android:layout_weight="1"
-        android:background="#1D673AB7"
+        android:background="@color/grey_darker"
         app:layout_constraintBottom_toTopOf="@+id/blackScreenBtn"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -107,13 +108,26 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
-        android:layout_marginEnd="32dp"
+        android:layout_marginEnd="6dp"
         android:layout_marginBottom="5dp"
         android:text="black screen"
         app:layout_constraintBottom_toTopOf="@+id/leftBtn"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintEnd_toStartOf="@+id/fundsBtn"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/fundsBtn"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="6dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginBottom="5dp"
+        android:text="Funds"
+        app:layout_constraintBottom_toTopOf="@+id/rightBtn"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/blackScreenBtn" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

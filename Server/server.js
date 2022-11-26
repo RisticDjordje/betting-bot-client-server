@@ -30,19 +30,21 @@ const array_of_pages = [page1, page2, page3, page4];
 
 var array_of_offers = [];
 var index_of_offer = -1;
+var list_of_matches = []
 
 // Login information
 var login_information = {
-    relja: [["relja12345", "Relja15052002"], ["somi333", "srbija333"]],
-    somi: [["somi333", "srbija333"], ["relja12345", "Relja15052002"], ["teica123", "tea12345"], ["djordjeristic", "DjordjeR81"]],
-    dj: [["djordjeristic", "DjordjeR81"]],
-    fr: [["test", "fasdfasd"]]
+    relja: [/*["relja12345", "Relja15052002"],*/["somi333", "srbija333"]],
+    somi: [["debadeba", "srbija1"], ["Fedor333", "borac123"], ["teica123", "tea12345"], ["djordjeristic", "DjordjeR81"]],
+    dj: [["teica123", "tea12345"], ["djordjeristic", "DjordjeR81"]],
+    fr: [["djordjeristic", "DjordjeR81"]]
 };
 
 
-
 if (cluster.isMaster) {
+    console.log("------------------------------------------------------");
     console.log(`Master ${process.pid} is running`);
+    console.log("------------------------------------------------------");
 
     const httpServer = http.createServer();
 
@@ -59,13 +61,15 @@ if (cluster.isMaster) {
         serialization: "advanced",
     });
 
+    // httpServer.listen(3000,"192.168.0.24");
     httpServer.listen(3000);
 
     (async () => {
         const tunnel = await localtunnel({
-            subdomain: "whenlambo-soon",
+            subdomain: "aa23",
             port: 3000
         });
+        console.log("------------------------------------------------------");
         console.log(`Server available at: ${tunnel.url}`);
         console.log("------------------------------------------------------");
     })();
@@ -105,7 +109,7 @@ if (cluster.isMaster) {
         var current_chosen_site = "Wwin";
 
         // When a new Client connection is opened.
-        console.log(`W ${process.pid} | New socket connection: ${colors.yellow(socket.id)}`)
+        console.log(`Worker ${process.pid} | New socket connection: ${colors.yellow(socket.id)}`)
 
         // Sending a message to CLIENT that they have connected
         socket.emit('connected', socket.id)
@@ -182,23 +186,21 @@ if (cluster.isMaster) {
                     var click_football = await array_of_pages[i].waitForSelector("#root > div > div.App > div.live-layout > div.live-layout__size > div > div > div.nav-vertical > div.nav-vertical-sports > div > div:nth-child(1) > div.nav-vertical-item__icons.active > span")
                     await click_football.click()
 
-                    //FIND TITLES OF ALL MATCHES
-                    var matches = await array_of_pages[i].$$eval("div.live-match__hov ", (matches) =>
-                        matches.map((option) => option.title));
 
-                    for (j = 0; j < matches.length; j++) {
+                    for (j = 0; j < list_of_matches.length; j++) {
 
-                        if (matches[j] == match_title) {
-                            index_of_match = j;                 //INDEX OF A MATCH WE WANT                
+                        if (list_of_matches[j] == match_title) {
+                            index_of_match = j;                         //INDEX OF A MATCH WE WANT                
                         }
                     }
-                    index_of_match += 3
 
+                    index_of_match += 2
+                    console.log(index_of_match)
                     let conversion_match = index_of_match.toString();     //CONVERTING NUMBER TO STRING
 
                     //CREATING SELECTOR AND CLICKING ON A MATCH
 
-                    let match_selector = "#root > div > div.App > div.live-layout > div.live-layout__size > div > div > div.live-layout__sport-main-panels > div.sport-main-panel.wclay > div:nth-child(" + conversion_match + ") > div > div.live-match__name > div > div.live-name-v__team"
+                    let match_selector = "#root > div > div.App > div.live-layout > div.live-layout__size > div > div > div.live-layout__sport-main-panels > div.sport-main-panel.wclay > div.sport-main-panel__sport_wrapper > div:nth-child(" + conversion_match + ") > div > div.live-match-left-content"
                     let found_match = await array_of_pages[i].waitForSelector(match_selector)
                     await found_match.click()
                     await delay(0.5)
@@ -213,7 +215,7 @@ if (cluster.isMaster) {
             } else {
 
                 if (!(username in login_information) || logged_users_ids == 0) {
-                    console.log(`W ${process.pid} | ${colors.red(username)} ${colors.brightRed(" not found.")}`)
+                    console.log(`W ${process.pid} | ${colors.red(username)} ${colors.brightRed("not found.")}`)
                     socket.emit('username_not_found', (username));
                 }
                 else//(!(logged_users_names.includes(username)))
@@ -235,7 +237,7 @@ if (cluster.isMaster) {
                     money.map((option) => option.textContent));
                 var money_value = parseFloat(money[0])
                 if (money_value > 45) { money_value = 45 }
-                array_of_bets.push(Math.floor(money_value * getRandomFloat(0.80, 1, 2)))
+                array_of_bets.push(Math.floor(money_value * getRandomFloat(0.90, 1, 2)))
                 // array_of_bets.push(0.1)
             }
 
@@ -374,8 +376,16 @@ async function find_matches() {
     var click_football = await page.waitForSelector("#root > div > div.App > div.live-layout > div.live-layout__size > div > div > div.nav-vertical > div.nav-vertical-sports > div > div:nth-child(1) > div.nav-vertical-item__icons.active > span")
     await click_football.click()
 
-    var list_of_matches = await page.$$eval("div.live-match__hov ", (list_of_matches) =>
-        list_of_matches.map((option) => option.title));
+    var list_of_matches_ids = await page.$$eval("div.live-name-v__home", (list_of_matches_home) =>
+        list_of_matches_home.map((option) => option.title));
+    var list_of_matches_leagues = await page.$$eval("div.live-name-v__away", (list_of_matches_away) =>
+        list_of_matches_away.map((option) => option.title));
+
+    var duzina = list_of_matches_ids.length
+
+    for (i = 0; i < duzina; i++) {
+        list_of_matches[i] = list_of_matches_ids[i] + " vs " + list_of_matches_leagues[i]
+    }
     await browser.close();
     return list_of_matches
 }
@@ -383,15 +393,15 @@ async function find_matches() {
 
 // FINDING ALL ACTIVE OFFERS' TITLES
 async function find_offer_titles(i) {
-    var titles_of_bets = await array_of_pages[i].$$eval("div.sport-bet-odds", (titles_of_bets) =>
-        titles_of_bets.map((option) => option.title));
+    var titles_of_bets = await array_of_pages[i].$$eval("div.msport-bet-odds__left", (titles_of_bets) =>
+        titles_of_bets.map((option) => option.textContent));
     return titles_of_bets
 }
 
 
 // FINDING ALL ACTIVE OFFERS' NAMES
 async function find_offer_names(i) {
-    var names_of_bets = await array_of_pages[i].$$eval("div.sport-bet-odds__left", (names_of_bets) =>
+    var names_of_bets = await array_of_pages[i].$$eval("div.msport-bet-odds__left", (names_of_bets) =>
         names_of_bets.map((option) => option.textContent));
     return names_of_bets
 }
@@ -412,7 +422,7 @@ async function find_funds(number_of_browsers) {
 // FUNCTION FOR PLACING BETS
 async function place_bet(socket, side, offer, i, bet) {
     var index_of_bet = 0
-    var bet_string = bet.toString();
+    var bet_string = "0.10"//bet.toString();
 
     var money = await array_of_pages[i].$$eval("#novac", (money) =>
         money.map((option) => option.textContent));
@@ -448,13 +458,13 @@ async function place_bet(socket, side, offer, i, bet) {
     let conversion_side = side.toString()
 
 
-    let bet_selector = "#root > div > div.App > div.live-layout.opened-event > div.live-layout__size > div > div.live-layout__event.wclay > div.live-match-singl > div:nth-child(4) > div:nth-child(" + conversion_bet + ") > div > div.sport-bet-odds__right > div:nth-child(" + conversion_side + ")"
+    let bet_selector = "#root > div > div.App > div.live-layout.opened-event > div.live-layout__size > div > div.live-event-container.wclay > div.live-event-container__match.live-event-container__match__large > div > div > div > div > div > div.live-matchsingle__odds__wrapper > div:nth-child(" + conversion_bet + ") > div > div.msport-bet-odds__right.msport-bet__size2 > div:nth-child(" + conversion_side + ") > div"
     let selected_bet = await array_of_pages[i].waitForSelector(bet_selector);
 
     await selected_bet.click();
 
     var is_selected = await array_of_pages[i].evaluate(() => {
-        var x = document.getElementsByClassName("sport-bet__odd selected").length;
+        var x = document.getElementsByClassName("wmodd__bet-type selected").length;
         return (x)
     });
     if (is_selected == 0)                                              //CHECK IF BET IS SELECTED 
@@ -464,20 +474,20 @@ async function place_bet(socket, side, offer, i, bet) {
         return console.log(`W ${colors.gray(process.pid)} | ${colors.brightGreen(username__)} ${colors.brightRed(" | Try again, bet is not selected.")} ${colors.brightYellow("For account : " + (i + 1))}`)
     }
     else {
-        console.log(`W ${colors.gray(process.pid)} | ${colors.brightGreen(username__)} ${colors.brightCyan(" | Bet selected!" + colors.brightYellow(" For account : " + (i + 1)))}`)                                 //YES
+        console.log(`W ${colors.gray(process.pid)} | ${colors.brightGreen(username__)} | ${colors.brightCyan("Bet selected!" + colors.brightYellow(" For account : " + (i + 1)))}`)                                 //YES
         console.log(`W ${colors.gray(process.pid)} | ${colors.brightCyan("Processing...")}`)
     }
 
-    if (availablemoney < bet) {
+    /*if (availablemoney < bet) {
         // Probably can not happen
         console.log(colors.brightGreen(username__) + colors.brightYellow(" | Not enough money. For account : " + (i + 1)))
         await delay(0.1)
         await selected_bet.click()
         return;
-    }
+    }*/
 
     let searchInput = await array_of_pages[i].$('input[class="wstake__input"]');
-    await searchInput.click({ clickCount: 2 });
+    await searchInput.click({ clickCount: 1 });
     await searchInput.type(bet_string);
     await delay(0.3)
 
@@ -485,46 +495,63 @@ async function place_bet(socket, side, offer, i, bet) {
         var x = document.getElementsByClassName("wpossiblepayout__payout")[0].innerText
         return (x)
     });
-    //payout.slice(0,-2)
+
 
     //CONFIRM THE BET
-    await array_of_pages[i].click('button[class = "btn--fill btn--checkout btn--xlarge "]');
-    await array_of_pages[i].click('button[class = "btn--fill btn--checkout btn--xlarge "]');
+    await array_of_pages[i].click('button[class = "btn--gradient btn--checkout btn--large  btn--wp100"]');
+    await array_of_pages[i].click('button[class = "btn--gradient btn--checkout btn--large  btn--wp100"]');
+
 
     let end1 = performance.now()
     do {
         var isthrough = await array_of_pages[i].evaluate(() => {
-            var x = document.getElementsByClassName("message-place-bet__main_bold").length;
+            var x = document.getElementsByClassName("ico-st-ticket-success-light  ").length;
             return x                                                                         //WAIT UNTIL BET IS CONFIRMED
         });
 
         var check_if_bet_procceded = await array_of_pages[i].evaluate(() => {
-            var y = document.getElementsByClassName("wmsg wmsg__error wmsg_border").length;
+            var y = document.getElementsByClassName("wticket__error").length;
+            return y;
+        });
+
+        var check_if_bet_procceded1 = await array_of_pages[i].evaluate(() => {
+            var y = document.getElementsByClassName("msg-place-bet msg-place-bet--error").length;
             return y;
         });
     }
-    while (isthrough == 0 && check_if_bet_procceded == 0)
+    while (isthrough == 0 && check_if_bet_procceded == 0 && check_if_bet_procceded1 == 0)
 
     if (check_if_bet_procceded != 0) {
         // Bet failed. Try again.
         socket.emit('bet_failed')
-        await array_of_pages[i].click('button[class = "btn--fill btn--accent btn--xlarge "]');
-        console.log(`W ${colors.gray(process.pid)} | ${colors.green(username__)} ${colors.brightYellow(" | ")} ${colors.brightRed("Bet did not make it through. ")} ${colors.brightYellow("For account : " + (i + 1))}`)
+        await array_of_pages[i].click('button[class = "btn--gradient btn--accent btn--large  btn--wp100"]');
+        console.log(`W ${colors.gray(process.pid)} | ${colors.green(username__)} ${colors.gray("| ")} ${colors.brightRed("Bet did not make it through. ")} ${colors.brightYellow("For account : " + (i + 1))}`)
         return
     }
+
+    if (check_if_bet_procceded1 != 0) {
+        socket.emit('bet_failed')
+        await array_of_pages[i].click('button[class = "btn--gradient btn--accent btn--xlarge  btn--wp100 btn--light"]');
+        console.log(`W ${colors.gray(process.pid)} | ${colors.green(username__)} ${colors.gray("| ")} ${colors.brightRed("Ticket rejected. ")} ${colors.brightYellow("For account : " + (i + 1))}`)
+        return
+    }
+
+    if (isthrough != 0) {
+        let clear_selector = "#root > div > div.App > div.live-layout.opened-event > div.live-layout__ticket > div > div > div.wticket > div.wmc-wrapper.wmc-center.wmc-nopadding.wmc--alwaysWhite > div.wmc-inside > div > div > div > div > div.msg-place-bet--menu > div:nth-child(2)"
+        let clear = await array_of_pages[i].waitForSelector(clear_selector);
+        await clear.click()
+    }
+
+
 
     var end = performance.now()
 
     console.log(colors.magenta(`\n ${username__} account ${(i + 1)} : ${colors.brightGreen(money_string + " €")}\n -------------------------`))
     console.log(colors.brightYellow(`Stake : ${colors.brightGreen(bet + " €")}`))
-    console.log(colors.brightYellow(`Payout : ${colors.brightGreen(payout)}`))
-    console.log(colors.brightYellow(`Time1 : + ${colors.brightCyan(((end1 - start1) / 1000).toFixed(2) + " s")}`))
-    console.log(colors.brightYellow(`Time : ${colors.brightCyan(((end - start) / 1000).toFixed(2) + " s")}`))
+    console.log(colors.brightYellow(`Payout : ${colors.brightGreen.underline(payout)}`))
+    console.log(colors.brightYellow(`Time to place bet : ${colors.brightCyan(((end1 - start1) / 1000).toFixed(2) + " s")}`))
+    console.log(colors.brightYellow(`Full time : ${colors.brightCyan(((end - start) / 1000).toFixed(2) + " s\n")}`))
     // Bet was successful
     socket.emit('bet_success', i + 1, bet, payout)
-
-    //DESELECT BET
-    await selected_bet.click();
-    await selected_bet.click();
 
 }

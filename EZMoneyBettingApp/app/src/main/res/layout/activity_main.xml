@@ -7,18 +7,53 @@
     android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
     tools:context=".MainActivity">
 
+    <Button
+        android:id="@+id/connectBtn"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="32dp"
+        android:text="connect"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_weight="1"
+        app:layout_constraintStart_toEndOf="@+id/ipEditText"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <EditText
+        android:id="@+id/ipEditText"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="39dp"
+        android:layout_marginBottom="18dp"
+        android:background="@color/grey_darker"
+        android:ems="10"
+        android:hint="IP"
+        android:inputType="textPersonName"
+        android:paddingLeft="10dp"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toTopOf="@+id/currentSiteTextView"
+        app:layout_constraintEnd_toStartOf="@+id/connectBtn"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintHorizontal_weight="1.9"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <TextView
         android:id="@+id/matchNameTextView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="19dp"
         android:layout_marginEnd="32dp"
-        android:background="#1D673AB7"
+        android:background="@color/grey_darker"
         android:gravity="center"
         android:text="No match chosen"
         android:textColor="#000000"
         android:textSize="20sp"
+        app:layout_constraintBottom_toTopOf="@+id/chooseMatchBtn"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
@@ -32,21 +67,23 @@
         android:layout_marginTop="10dp"
         android:layout_marginEnd="32dp"
         android:text="choose match"
+        app:layout_constraintBottom_toTopOf="@+id/console"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.501"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/matchNameTextView" />
 
     <ScrollView
+        android:id="@+id/console"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginStart="32dp"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="12dp"
         android:layout_marginEnd="32dp"
-        android:layout_marginBottom="24dp"
+        android:layout_marginBottom="120dp"
         android:layout_weight="1"
-        android:background="#1D673AB7"
-        app:layout_constraintBottom_toTopOf="@+id/loginBtn"
+        android:background="@color/grey_darker"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/chooseMatchBtn">
@@ -56,9 +93,9 @@
             android:id="@+id/consoleLogTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:hint="Console"
             android:paddingLeft="10dp"
             android:paddingTop="5dp"
-            android:text="1 | Trying to connect to the server. Please wait.\n------------------------------------------------------"
             android:textColor="#000000"
             android:textSize="15sp" />
     </ScrollView>
@@ -66,10 +103,12 @@
     <EditText
         android:id="@+id/username"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="28dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="23dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginBottom="60dp"
+        android:layout_marginBottom="58dp"
+        android:background="@color/grey_darker"
         android:ems="10"
         android:hint="Username"
         android:inputType="textPersonName"
@@ -77,51 +116,61 @@
         android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/loginBtn"
-        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintHorizontal_chainStyle="spread"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintHorizontal_weight="1.9"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/console" />
 
     <Button
         android:id="@+id/loginBtn"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
         android:layout_marginEnd="32dp"
-        android:layout_marginBottom="60dp"
+        android:layout_marginBottom="52dp"
         android:text="login"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/username" />
+        app:layout_constraintHorizontal_weight="1"
+        app:layout_constraintStart_toEndOf="@+id/username"
+        app:layout_constraintTop_toBottomOf="@id/console" />
 
     <TextView
         android:id="@+id/currentSiteTextView"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:layout_marginStart="32dp"
+        android:layout_marginTop="4dp"
         android:layout_marginEnd="8dp"
-        android:background="#1D673AB7"
+        android:layout_marginBottom="27dp"
+        android:background="@color/grey_darker"
         android:gravity="center"
         android:text="WWin"
         android:textColor="#000000"
         android:textSize="20sp"
-        app:layout_constraintBaseline_toBaselineOf="@+id/changeSiteBtn"
+        app:layout_constraintBottom_toTopOf="@+id/matchNameTextView"
         app:layout_constraintEnd_toStartOf="@+id/changeSiteBtn"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintHorizontal_weight="1.9"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/ipEditText" />
 
     <Button
         android:id="@+id/changeSiteBtn"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="32dp"
         android:text="change site"
+        android:textSize="12sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_weight="1"
         app:layout_constraintStart_toEndOf="@+id/currentSiteTextView"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/connectBtn" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
