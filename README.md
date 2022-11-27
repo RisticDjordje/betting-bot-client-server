@@ -22,26 +22,18 @@
 ---  
 <!-- Badges -->
 <p>
-  <a href="https://github.com/RisticDjordje/betting-bot-client-server/graphs/contributors">
-    <img src="https://img.shields.io/github/contributors/Louis3797/awesome-readme-template" alt="contributors" />
-  </a>
-  <a href="">
-    <img src="https://img.shields.io/github/last-commit/Louis3797/awesome-readme-template" alt="last update" />
-  </a>
-  <a href="https://github.com/RisticDjordje/betting-bot-client-server/network/members">
-    <img src="https://img.shields.io/github/forks/Louis3797/awesome-readme-template" alt="forks" />
-  </a>
-  <a href="https://github.com/RisticDjordje/betting-bot-client-server/stargazers">
-    <img src="https://img.shields.io/github/stars/Louis3797/awesome-readme-template" alt="stars" />
-  </a>
-  <a href="https://github.com/RisticDjordje/betting-bot-client-server/issues/">
-    <img src="https://img.shields.io/github/issues/Louis3797/awesome-readme-template" alt="open issues" />
-  </a>
-</p>
+  <img alt="contributors" src="https://img.shields.io/github/contributors/RisticDjordje/betting-bot-client-server">
+  <img alt="Commits" src="https://badgen.net/github/commits/RisticDjordje/betting-bot-client-server">
+  <img alt="GitHub last commit" src="https://img.shields.io/github/last-commit/RisticDjordje/betting-bot-client-server">
+  <img alt="GitHub Repo stars" src="https://img.shields.io/github/stars/RisticDjordje/betting-bot-client-server">  
+  <img alt="GitHub issues" src="https://img.shields.io/github/issues/RisticDjordje/betting-bot-client-server">
+  <img alt="Languages count" src="https://img.shields.io/github/languages/count/RisticDjordje/betting-bot-client-server">
+  <img alt="Language top" src="https://img.shields.io/github/languages/top/RisticDjordje/betting-bot-client-server">
+  <img alt="Lines of code" src="https://img.shields.io/tokei/lines/github/RisticDjordje/betting-bot-client-server">
+</p> 
 </div> 
 
 ---
-
 <!--
 <h4>
     <a href="https://github.com/Louis3797/awesome-readme-template/">View Demo</a>
@@ -74,8 +66,11 @@
 ## About The Project
 
 This project has 2 parts: 
-- **Client**: Android app that allows users to connect to the *server*, log-in into several accounts, choose a match, choose an offer, see what funds they currently have on their accounts and place an *instant* live bet on all of their account *simultaneuously*.
-- **Server**: Highly-scalable server that allows dozens of users to connect. Listens to *client* signals to log-in, choose a match/offer, place bets and many more.
+1. **Client**: 
+   - Android app that allows users to connect to the *server*, log-in into several accounts, choose a match, choose an offer, see what funds they currently have on their accounts and place an *instant* live bet on all of their account *simultaneuously*.
+2. **Server**: 
+    - Highly-scalable server that allows dozens of users to connect. 
+    - Listens to *client* signals to log-in, choose a match/offer, place bets and many more.
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 <br>
