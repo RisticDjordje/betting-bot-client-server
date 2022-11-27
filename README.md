@@ -116,7 +116,8 @@ This project has 2 parts:
 - [x] Ability to make the screen black and continue using the app.
 - [x] Sound notifications for the result of the bet.
 - [x] Check current available funds at each of your accounts.
-- [x] Change your current bet to whatever is currently available.
+- [x] Ability to choose the live bet offer.
+- [x] Custom or random amount to place as a bet.
 
 #### Server
 - [x] Highly-scalable allowing 16+ users to be connected simultaneusly.
