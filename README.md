@@ -18,9 +18,8 @@
   <p>
     Android app in Kotlin that allows dozens of users to connect to a scalable Node.js server and place instant live bets on multiple accounts and several betting sites simultaneously.
   </p>
-  
----- 
-  
+
+---  
 <!-- Badges -->
 <p>
   <a href="https://github.com/RisticDjordje/betting-bot-client-server/graphs/contributors">
@@ -41,7 +40,7 @@
 </p>
 </div> 
 
----- 
+---
 
 <!--
 <h4>
@@ -75,11 +74,11 @@
 ## About The Project
 
 This project has 2 parts: 
-- **Client**: Android app that allows users to connect to the *server*, log-in into several accounts, choose a match, choose an offer and place an instant live bet on all of their account simultaneuously.
-- **Server**: Highly-scalable server that allows dozens of users to connects. Listens to *client* signals to log-in, choose a match/offer, place bets and many more.
+- **Client**: Android app that allows users to connect to the *server*, log-in into several accounts, choose a match, choose an offer, see what funds they currently have on their accounts and place an *instant* live bet on all of their account *simultaneuously*.
+- **Server**: Highly-scalable server that allows dozens of users to connect. Listens to *client* signals to log-in, choose a match/offer, place bets and many more.
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-<br><br>
+<br>
 
 <!-- DEMO -->
 ## Demo
@@ -92,16 +91,14 @@ This project has 2 parts:
 <!-- BUILT WITH -->
 ## Built With
 
-Main languages, libraries and frameworks used in this project.
-
-### Client
-* ![Kotlin][Kotlin]
+#### &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Client
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ![Kotlin][Kotlin]
   ![Java][Java]
   ![Socket.io](https://img.shields.io/badge/Socket.io-black?style=for-the-badge&logo=socket.io&badgeColor=010101)
   
 
-### Server
-* ![javascript][javascript]
+#### &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Server
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ![javascript][javascript]
   ![node.js][Node.js]
   ![Socket.io](https://img.shields.io/badge/Socket.io-black?style=for-the-badge&logo=socket.io&badgeColor=010101)
   <img src="https://a11ybadges.com/badge?logo=puppeteer" alt="puppeteer" width="94.5" height="28"/>
@@ -114,29 +111,30 @@ Main languages, libraries and frameworks used in this project.
 <!-- USAGE EXAMPLES -->
 ## Features
 
-### Client
-* Ability to choose which "ip" address to connect to.
-* Choose which account to connect to.
-* Choose whatever match currently available.
-* Console to get instant updates from the server and other notifications.
-* Ability to control the app only using volume up/down buttons.
-* Ability to make the screen black and continue using the app.
-* Sound notifications for the result of the bet.
-* Check current available funds at each of your accounts.
-* Change your current bet to whatever is currently available.
+#### Client
+- [x] Realtime updates refecting the latest changes on betting websites.
+- [x] Ability to choose which "ip" address to connect to.
+- [x] Choose which account to connect to.
+- [x] Choose one of the matches currently available.
+- [x] Console to get instant updates from the server and other notifications.
+- [x] Ability to control the app only using volume up/down buttons.
+- [x] Ability to make the screen black and continue using the app.
+- [x] Sound notifications for the result of the bet.
+- [x] Check current available funds at each of your accounts.
+- [x] Change your current bet to whatever is currently available.
 
-### Server
-* Highly-scalable allowing 16+ users to be connected simultaneusly.
-* Fault-tolerant! If one of the processes/workers dies, another one automatically takes over the load and continues the processes.
-* Full overview of every actions.
-* Ability to turn the GUI on/off.
+#### Server
+- [x] Highly-scalable allowing 16+ users to be connected simultaneusly.
+- [x] Fault-tolerant! If one of the processes/workers dies, another one automatically takes over the load and continues the processes.
+- [x] Full overview of every actions.
+- [x] Ability to turn the GUI on/off.
 <br><br>
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 
 
-<!-- ROADMAP 
+<!-- ROADMAP
 ## Roadmap
 
 - [x] Add Changelog
@@ -147,9 +145,8 @@ Main languages, libraries and frameworks used in this project.
     - [ ] Chinese
     - [ ] Spanish
 
-
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
--->
+ -->
 
 
 <!-- CONTRIBUTING -->
