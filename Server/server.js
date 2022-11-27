@@ -34,16 +34,17 @@ var list_of_matches = []
 
 // Login information
 var login_information = {
-    relja: [/*["relja12345", "Relja15052002"],*/["somi333", "srbija333"]],
+    relja: [["relja12345", "Relja15052002"]/*, ["somi333", "srbija333"]*/],
     somi: [["debadeba", "srbija1"], ["Fedor333", "borac123"], ["teica123", "tea12345"], ["djordjeristic", "DjordjeR81"]],
     dj: [["teica123", "tea12345"], ["djordjeristic", "DjordjeR81"]],
     fr: [["djordjeristic", "DjordjeR81"]]
 };
 
 
+
 if (cluster.isMaster) {
     console.log("------------------------------------------------------");
-    console.log(`Master ${process.pid} is running`);
+    console.log(`Master ${process.pid} is running`.green);
     console.log("------------------------------------------------------");
 
     const httpServer = http.createServer();
@@ -61,12 +62,12 @@ if (cluster.isMaster) {
         serialization: "advanced",
     });
 
-    // httpServer.listen(3000,"192.168.0.24");
+    //httpServer.listen(3000,"192.168.0.28");
     httpServer.listen(3000);
 
     (async () => {
         const tunnel = await localtunnel({
-            subdomain: "aa23",
+            subdomain: "rews",
             port: 3000
         });
         console.log("------------------------------------------------------");
@@ -155,13 +156,22 @@ if (cluster.isMaster) {
 
                 for (i = 0; i < number_of_browsers; i++) {
 
-                    array_of_browsers[i] = await puppeteer.launch({ headless: false, args: ['--disable-dev-shm-usage'] });
+                    array_of_browsers[i] = await puppeteer.launch({ headless: false, args: ['--disable-dev-shm-usage'], });
                     array_of_pages[i] = await array_of_browsers[i].newPage();
 
-                    await array_of_pages[i].goto('https://wwin.com/');
-                    await array_of_pages[i].type('input[id = "txbUsername"]', login_information[username][i][0]);
-                    await array_of_pages[i].type('input[id = "txbPassword"]', login_information[username][i][1]);
+                    await array_of_pages[i].goto('https://wwin.com/#/login', { waitUntil: "domcontentloaded" });
 
+                    const elementHandle = await array_of_pages[i].waitForSelector('#loginFrame');
+                    const frame = await elementHandle.contentFrame();
+                    await frame.waitForSelector('#podatakKorisnik', { timeout: 3000 }).catch(() => console.log('Field #podatakKorisnik doesn\'t exist!'));
+                    //console.log(`Element has been clicked`);
+                    const user_name = await frame.$('#podatakKorisnik');
+                    const password = await frame.$('#podatakUlaz');
+                    await user_name.type(login_information[username][i][0]);
+                    await password.type(login_information[username][i][1]);
+
+                    //await array_of_pages[i].type('#podatakKorisnik', login_information[username][i][0]);
+                    //await array_of_pages[i].type('#podatakUlaz', login_information[username][i][1]);
                     index_of_match = 0;
 
 
@@ -195,7 +205,6 @@ if (cluster.isMaster) {
                     }
 
                     index_of_match += 2
-                    console.log(index_of_match)
                     let conversion_match = index_of_match.toString();     //CONVERTING NUMBER TO STRING
 
                     //CREATING SELECTOR AND CLICKING ON A MATCH
@@ -478,13 +487,13 @@ async function place_bet(socket, side, offer, i, bet) {
         console.log(`W ${colors.gray(process.pid)} | ${colors.brightCyan("Processing...")}`)
     }
 
-    /*if (availablemoney < bet) {
+    if (availablemoney < bet) {
         // Probably can not happen
         console.log(colors.brightGreen(username__) + colors.brightYellow(" | Not enough money. For account : " + (i + 1)))
         await delay(0.1)
         await selected_bet.click()
         return;
-    }*/
+    }
 
     let searchInput = await array_of_pages[i].$('input[class="wstake__input"]');
     await searchInput.click({ clickCount: 1 });

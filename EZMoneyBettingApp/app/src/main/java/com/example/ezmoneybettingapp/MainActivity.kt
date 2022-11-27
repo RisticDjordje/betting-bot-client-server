@@ -157,7 +157,7 @@ class MainActivity : AppCompatActivity() {
             mSocket.on("match_clicked_received") { args ->
                 if (args[0] != null) {
                     runOnUiThread {
-                        val matchChosen = args[0].toString().substring(9)
+                        val matchChosen = args[0].toString().substring(0)
                         isMatchChosen = true
                         // Updating the CLIENT console
                         consoleLogCounter++
