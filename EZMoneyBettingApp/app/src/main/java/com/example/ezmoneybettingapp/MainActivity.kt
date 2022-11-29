@@ -34,7 +34,6 @@ class MainActivity : AppCompatActivity() {
         var isConnected = false
 
 
-
         // Establishing a socket
         // CHOOSE MATCH
         connectBtn.setOnClickListener {
@@ -280,7 +279,7 @@ class MainActivity : AppCompatActivity() {
         val savedIp = sharedPref.getString("ip", "http://10.0.2.2:3000")
         val savedUsername = sharedPref.getString("username", "Username")
         val savedSite = sharedPref.getString("site", "WWin")
-        val savedMatch =  sharedPref.getString("match", "No Match Chosen")
+        val savedMatch = sharedPref.getString("match", "No Match Chosen")
 
         val ipEditText = findViewById<TextView>(R.id.ipEditText)
         val username = findViewById<TextView>(R.id.username)
