@@ -12,7 +12,7 @@
 
 <div align="center">
 
-  <img src="https://github.com/RisticDjordje/betting-bot-client-server/blob/master/LOGO/BettingLogo2.png" alt="logo" width="160" height="auto" />
+  <img src="https://github.com/RisticDjordje/betting-bot-client-server/blob/master/media/logo/BettingLogo2.png" alt="logo" width="160" height="auto" />
   <h1>EZ Money ultimate live-bet placing app</h1>
   
   <p>
@@ -78,7 +78,7 @@ This project has 2 parts:
 <!-- DEMO -->
 ## Demo
 
-[![Product Name Screen Shot][product-screenshot]](https://example.com)
+![](https://github.com/RisticDjordje/betting-bot-client-server/blob/master/media/logo/demo.gif)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 <br>
@@ -117,13 +117,14 @@ This project has 2 parts:
 - [x] Sound notifications for the result of the bet.
 - [x] Check current available funds at each of your accounts.
 - [x] Ability to choose the live bet offer.
-- [x] Custom or random amount to place as a bet.
+- [x] Caching of previous choices (ip adress, username, match) to make the UX smoother.
 
 #### Server
 - [x] Highly-scalable allowing 16+ users to be connected simultaneusly.
 - [x] Fault-tolerant! If one of the processes/workers dies, another one automatically takes over the load and continues the processes.
 - [x] Full overview of every actions.
 - [x] Ability to turn the GUI on/off.
+- [x] Custom or random amount to place as a bet.
 <br><br>
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
@@ -134,12 +135,7 @@ This project has 2 parts:
 ## Roadmap
 
 - [x] Add Changelog
-- [x] Add back to top links
-- [ ] Add Additional Templates w/ Examples
-- [ ] Add "components" document to easily copy & paste sections of the readme
-- [ ] Multi-language Support
-    - [ ] Chinese
-    - [ ] Spanish
+
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
  -->

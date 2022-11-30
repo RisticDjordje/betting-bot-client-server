@@ -9,6 +9,7 @@ const http = require('http')
 
 // cluster implementation
 const cluster = require('cluster');
+const { deflate } = require('zlib');
 const numCPUs = require('os').cpus().length;
 
 // Setting delay with units in seconds         
@@ -26,10 +27,10 @@ var logged_users_ids = [];
 
 // Login information
 var login_information = {
-    relja: [["relja12345", "Relja15052002"]/*, ["somi333", "srbija333"]*/],
+    re: [["relja12345", "Relja15052002"]/*, ["somi333", "srbija333"]*/],
     somi: [["debadeba", "srbija1"], ["Fedor333", "borac123"], ["teica123", "tea12345"], ["djordjeristic", "DjordjeR81"]],
-    djordje: [["teica123", "tea12345"], ["relja12345", "Relja15052002"]],
-    fr: [["djordjeristic", "DjordjeR81"]]
+    relja: [["teica123", "tea12345"], ["relja12345", "Relja15052002"]],
+    djordje: [["djordjeristic", "DjordjeR81"], ["teica123", "tea12345"]]
 };
 
 var username__; // will hold the the user's username
@@ -48,7 +49,7 @@ var list_of_matches = []; // list of all active matches
 // Initializing a master process
 if (cluster.isMaster) {
     console.log("------------------------------------------------------");
-    console.log(`Master ${process.pid} is running`.green);
+    console.log(`Master ${colors.gray(process.pid)} is running.`);
     console.log("------------------------------------------------------");
 
     const httpServer = http.createServer();
@@ -66,33 +67,32 @@ if (cluster.isMaster) {
         serialization: "advanced",
     });
 
+    for (let i = 0; i < numCPUs; i++) {
+        cluster.fork(); // fork numCPU workers
+    }
+
     //httpServer.listen(3000,"192.168.0.28");
     httpServer.listen(3000);
 
     (async () => {
         const tunnel = await localtunnel({
-            subdomain: "rews",
+            subdomain: "ezmani",
             port: 3000
         });
         console.log("------------------------------------------------------");
-        console.log(`Server available at: ${tunnel.url}`);
+        console.log(`Server available at: ${colors.brightRed(tunnel.url)}`);
         console.log("------------------------------------------------------");
     })();
 
-
-    for (let i = 0; i < numCPUs; i++) {
-        cluster.fork(); // fork numCPU workers
-    }
-
     cluster.on("exit", (worker) => {
         // if a worker dies, fork a new one
-        console.log(`Worker ${worker.process.pid} died`);
+        console.log(`Worker ${worker.process.pid} died.`);
         cluster.fork();
     });
 
 } else { // if it's a worker process
 
-    console.log(`Worker ${process.pid} started`);
+    console.log(`Worker ${colors.gray(process.pid)} started.`);
 
     const httpServer = http.createServer(); // create a new http server
     const io = new Server(httpServer);
@@ -116,7 +116,7 @@ if (cluster.isMaster) {
         var current_chosen_site = "Wwin";
 
         // When a new Client connection is opened.
-        console.log(`Worker ${process.pid} | New socket connection: ${colors.yellow(socket.id)}`)
+        console.log(`Worker ${colors.gray(process.pid)} | New socket connection: ${colors.yellow(socket.id)}`)
 
         // Sending a message to CLIENT that they have connected
         socket.emit('connected', socket.id)
@@ -132,11 +132,11 @@ if (cluster.isMaster) {
                 for (i = 0; i < login_information[username__].length; i++) {
                     await array_of_browsers[i].close()
                 }
-                console.log(`W ${process.pid} | ${colors.red(username__)} (ID: ${colors.red(socket.id)}) disconnected. Closed all his browsers.`)
+                console.log(`Worker ${colors.gray(process.pid)} | ${colors.red(username__)} (ID: ${colors.red(socket.id)}) disconnected. Closed all his browsers.`)
             }
             else {
                 // if user was not logged in
-                console.log(`W ${process.pid} | User disconnected. ID: ${colors.red(socket.id)}`)
+                console.log(`Worker ${colors.gray(process.pid)} | User disconnected. ID: ${colors.red(socket.id)}`)
             }
         });
 
@@ -145,7 +145,7 @@ if (cluster.isMaster) {
         socket.on('site_chosen', async (site_chosen) => {
             // if user chooses a different site
             current_chosen_site = site_chosen;
-            console.log(`W ${process.pid} | ID: ${colors.yellow(socket.id)} changed site to ${colors.cyan(current_chosen_site)}`)
+            console.log(`Worker ${colors.gray(process.pid)} | ID: ${colors.yellow(socket.id)} changed site to ${colors.cyan(current_chosen_site)}`)
             socket.emit('site_chosen_received')
         });
 
@@ -154,7 +154,7 @@ if (cluster.isMaster) {
         socket.on('login', async (username) => {
             // if user clicks on the login button
             username__ = username
-            console.log(`W ${process.pid} | ID: ${colors.yellow(socket.id)} has attempted to log in to: ${colors.brightGreen(username)}`)
+            console.log(`Worker ${colors.gray(process.pid)} | ID: ${colors.yellow(socket.id)} has attempted to log in to: ${colors.brightGreen(username)}`)
             // If the username is in the array of usernames and the user is not already logged in
             if (username in login_information && logged_users_ids.includes(socket.id) == false) {
 
@@ -163,7 +163,8 @@ if (cluster.isMaster) {
                 logged_users_ids.push(socket.id) // adding the user to the array of logged in users
                 number_of_browsers = login_information[username].length; // setting the number of browsers to the number of accounts the user has
                 socket.emit('login_successful', username, number_of_browsers); // sending a message to the client that the login was successful 
-                console.log(`W ${process.pid} | ID: ${colors.brightGreen(socket.id)} has successfully logged in to: ${colors.brightGreen(username)}`)
+                console.log(`Worker ${colors.gray(process.pid)} | ID: ${colors.brightGreen(socket.id)} has successfully logged in to: ${colors.brightGreen(username)}`)
+                console.log(`Worker ${colors.gray(process.pid)} | ID: ${colors.brightGreen(socket.id)} signing in to ${colors.brightGreen(number_of_browsers)} ${colors.magenta(current_chosen_site)} account(s).`)
 
 
                 // for each account the user has open the browser and repeat the following same procedure
@@ -172,7 +173,7 @@ if (cluster.isMaster) {
                     // opening a browser
                     // headless: false, open the GUI so that the user can see what's happening
                     // headless: true, no GUI, the user can't see what's happening (faster)
-                    array_of_browsers[i] = await puppeteer.launch({ headless: false, args: ['--disable-dev-shm-usage'], });
+                    array_of_browsers[i] = await puppeteer.launch({ headless: true, args: ['--disable-dev-shm-usage'], });
                     array_of_pages[i] = await array_of_browsers[i].newPage();
 
                     // open the page
@@ -227,23 +228,23 @@ if (cluster.isMaster) {
                     let found_match = await array_of_pages[i].waitForSelector(match_selector) // wait for the match selector to load
                     await found_match.click()
                     await delay(0.5)
-                    console.log(`W ${process.pid} | ${colors.brightGreen(username)} logged in to  |  WWin name: ${colors.brightYellow(login_information[username][i][0])}  |  Wwin password: ${colors.brightYellow(login_information[username][i][1])}`)
+                    console.log(`Worker ${colors.gray(process.pid)} | ID: ${colors.brightGreen(socket.id)} successfully logged in to ${colors.brightMagenta(current_chosen_site)} ${colors.gray('Account')} ${colors.grey(i + 1)} | Name: ${colors.brightYellow(login_information[username][i][0])} | Password: ${colors.brightYellow(login_information[username][i][1])}.`)
                     socket.emit('page_logged_in', (login_information[username][i][0])) // sending a message to the client that the login was successful
                 }
 
                 // Letting the Client know USERNAME has been received
                 socket.emit('login_finished', (number_of_browsers));
-                console.log(`W ${process.pid} | ID: ${colors.brightGreen(socket.id)} has finished logging in to: ${colors.brightGreen(username)}`)
+                console.log(`Worker ${colors.gray(process.pid)} | ID: ${colors.brightGreen(socket.id)} has finished logging in to: ${colors.brightGreen(username)}`)
                 is_logged_in = true;
             } else { // if the username is not in the array of usernames
 
                 if (!(username in login_information) || logged_users_ids == 0) {
-                    console.log(`W ${process.pid} | ${colors.red(username)} ${colors.brightRed("not found.")}`)
+                    console.log(`Worker ${colors.gray(process.pid)} | ${colors.red(username)} ${colors.brightRed("not found.")}`)
                     socket.emit('username_not_found', (username));
                 }
                 else // if the user is already logged in
                 {
-                    console.log(colors.red(username) + colors.brightRed(" already logged in."))
+                    console.log(`Worker ${colors.gray(process.pid)} | + ${colors.brightRed(" already logged in.")}`)
                     socket.emit('username_logged_in', (username));
                 }
 
@@ -253,7 +254,7 @@ if (cluster.isMaster) {
         // LEFT BUTTON
         socket.on('left_button', async () => {
             // if the user clicks on the left button
-            console.log(`W ${process.pid} | ${colors.brightGreen(username__)} pressed LEFT/OVER/YES button.`)
+            console.log(`Worker ${colors.gray(process.pid)} | ${colors.brightGreen(username__)} pressed ${colors.black(`LEFT/OVER/YES`)} button.`)
 
             bets_to_be_placed = [] 
             for (i = 0; i < number_of_browsers; i++) {
@@ -282,7 +283,7 @@ if (cluster.isMaster) {
             }
 
 
-            await Promise.all([array_of_place_bets])
+            await Promise.all(array_of_place_bets)
 
 
             // Letting the Client know LEFT has been received
@@ -319,8 +320,8 @@ if (cluster.isMaster) {
             }
 
             await Promise.all([array_of_place_bets])
-            console.log(`W ${process.pid} | ${colors.brightGreen(username__)} pressed RIGHT/UNDER/NO button.`)
-            // Letting the Client know LEFT has been received
+            console.log(`Worker ${colors.gray(process.pid)} | ${colors.brightGreen(username__)} pressed ${colors.black(`RIGHT/UNDER/NO`)} button.`)
+            // Letting the Client know RIGHT has been received
             socket.emit('right_button_received');
         })
 
@@ -328,7 +329,7 @@ if (cluster.isMaster) {
         // OFFERS BUTTON
         socket.on('offers_request', async () => {
 
-            console.log(`W ${process.pid} | ${colors.brightGreen(username__)} requested offers. Sending offers.`)
+            console.log(`Worker ${colors.gray(process.pid)} | ${colors.brightGreen(username__)} requested offers. Sending currently available offers.`)
 
             var titles_of_bets = await find_offer_titles(0) // finding the titles of the bets currently available
             var names_of_bets = await find_offer_names(0)   // finding the names of the bets currently available
@@ -347,7 +348,7 @@ if (cluster.isMaster) {
 
         // Receive the offer that the user wants to bet on
         socket.on('offer_chosen', async (offer_received_title, offer_received_name) => {
-            console.log(`W ${process.pid} | ${colors.brightGreen(username__)} chose offer. Name: ${colors.brightCyan(offer_received_name)} | Title: ${colors.brightCyan(offer_received_title)}`)
+            console.log(`Worker ${colors.gray(process.pid)} | ${colors.brightGreen(username__)} chose offer: ${colors.brightMagenta(offer_received_name)}`)
 
             array_of_offers.push(offer_received_title) // adding the offer user wants to bet on to the array of offers
             index_of_offer = array_of_offers.length == 0 ? 0 : array_of_offers.length - 1
@@ -361,7 +362,7 @@ if (cluster.isMaster) {
 
         // When the client requests to see the currently available matches
         socket.on('matches_request', async () => {
-            console.log(`W ${process.pid} | ID: ${colors.yellow(socket.id)} requested matches. Sending matches.`)
+            console.log(`Worker ${colors.gray(process.pid)} | ID: ${colors.yellow(socket.id)} requested matches. Sending currently available matches.`)
 
             var titles_of_matches = await find_matches(0) // finding the titles of the matches currently available
 
@@ -373,20 +374,19 @@ if (cluster.isMaster) {
         socket.on('match_chosen', async (match_title_received) => {
             match_title = match_title_received
             
-            console.log(`W ${process.pid} | ID: ${colors.yellow(socket.id)} chose match: ${colors.brightCyan(match_title)}`)
+            console.log(`Worker ${colors.gray(process.pid)} | ID: ${colors.yellow(socket.id)} chose match: ${colors.brightCyan(match_title)}`)
             socket.emit('match_clicked_received', match_title); // Letting the Client know MATCH has been received
         })
 
 
         // When the client requests to see the currently available funds 
         socket.on('funds_request', async () => {
-            console.log(`W ${process.pid} | ID: ${colors.yellow(socket.id)} requested to see his funds. Sending funds.`)
+            console.log(`Worker ${colors.gray(process.pid)} | ${colors.brightGreen(username__)} requested to see his funds. Sending funds.`)
 
             var current_funds = await find_funds(number_of_browsers) // finding the funds currently available
 
             // Sending current matches to the client
             socket.emit('current_funds', current_funds);
-            console.log(array_of_offers);
         })
     });
 }
@@ -451,9 +451,8 @@ async function place_bet(socket, side, offer, i, bet) {
 
     var money = await array_of_pages[i].$$eval("#novac", (money) =>
         money.map((option) => option.textContent)); // finding the amount of money the user currently has
-    console.log(money_string)
     var money_string = money[0] // money returns a list so money is the first element of the list
-    var availablemoney = parseFloat(money_string);
+    var availablemoney = parseFloat(money_string.replace(",","."))
 
     // variables for testing time
     var start = performance.now() 
@@ -464,7 +463,8 @@ async function place_bet(socket, side, offer, i, bet) {
 
     if (titles_of_bets.includes(offer) == false) { // if the offer is not available
         socket.emit('offer_not_found', i + 1)
-        return console.log(`W ${process.pid} | ${colors.brightGreen(username__)} | ${colors.brightRed("Offer not found for account:")} ${i + 1}`)
+        return console.log(`Worker ${colors.gray(process.pid)} | ${colors.brightGreen(username__)} | ${colors.grey('Account')} ${colors.grey(i + 1)}  | ${colors.brightRed("Offer ")} + ${colors.brightMagenta(names_of_bets[j])} + ${colors.brightRed(" not found.")}`)
+
     }
 
     for (j = 0; j < titles_of_bets.length; j++) { // finding the index of the offer
@@ -472,7 +472,7 @@ async function place_bet(socket, side, offer, i, bet) {
         if (titles_of_bets[j] == offer) {
             index_of_bet = j;
             index_of_bet++
-            console.log(colors.brightYellow(`W ${process.pid} | ${colors.brightGreen(username__)} | Offer ${colors.brightMagenta(names_of_bets[j])} found for account: ${colors.yellow(i + 1)}`))
+            console.log(`Worker ${colors.gray(process.pid)} | ${colors.brightGreen(username__)} | ${colors.grey('Account')} ${colors.grey(i + 1)} | Offer ${colors.brightMagenta(names_of_bets[j])} found.`)
             break;
         }
     }
@@ -484,23 +484,22 @@ async function place_bet(socket, side, offer, i, bet) {
     await selected_bet.click();
 
     var is_selected = await array_of_pages[i].evaluate(() => { // checking if the bet is selected. if selected returns 1, else 0
-        var x = document.getElementsByClassName("wmodd__bet-type selected").length;
-        return (x)
+        return document.getElementsByClassName("wmodd__bet-type selected").length;
     });
     
     if (is_selected == 0)                                              //CHECK IF BET IS SELECTED 
     {
         // This side of the offer or the offer is not currently active, try again.
         socket.emit('offer_not_active', i + 1)
-        return console.log(`W ${colors.gray(process.pid)} | ${colors.brightGreen(username__)} ${colors.brightRed(" | Try again, bet is not selected.")} ${colors.brightYellow("For account : " + (i + 1))}`)
+        return console.log(`Worker ${colors.gray(process.pid)} | ${colors.brightGreen(username__)} | ${colors.brightRed("Try again, bet is not selected.")} ${colors.brightYellow("For account : " + (i + 1))}`)
     }
     else {
-        console.log(`W ${colors.gray(process.pid)} | ${colors.brightGreen(username__)} | ${colors.brightCyan("Bet selected!" + colors.brightYellow(" For account : " + (i + 1)))}`)                                 //YES
-        console.log(`W ${colors.gray(process.pid)} | ${colors.brightCyan("Processing...")}`)
+        console.log(`Worker ${colors.gray(process.pid)} | ${colors.brightGreen(username__)} | ${colors.grey('Account')} ${colors.grey(i + 1)} | ${colors.brightCyan("Bet selected!")}`)
+        console.log(`Worker ${colors.gray(process.pid)} | ${colors.brightGreen(username__)} | ${colors.grey('Account')} ${colors.grey(i + 1)} | ${colors.brightCyan("Processing the bet..")}`)
     }
 
     if (availablemoney < bet) { // if the user doesn't have enough money, which never really happens -> ez money <3
-        console.log(colors.brightGreen(username__) + colors.brightYellow(" | Not enough money. For account : " + (i + 1)))
+        console.log(`Worker ${colors.gray(process.pid)} | ${colors.brightGreen(username__)} | ${colors.grey('Account')} ${colors.grey(i + 1)} | ${colors.brightRed("Not enough money on account.")}`)
         await delay(0.1)
         await selected_bet.click()
         return;
@@ -509,13 +508,13 @@ async function place_bet(socket, side, offer, i, bet) {
     let searchInput = await array_of_pages[i].$('input[class="wstake__input"]'); // finding the input field for entering the amount of money
     await searchInput.click({ clickCount: 1 });
     await searchInput.type(bet_string);
-    await delay(0.3)
 
+    await delay(0.3)
+    
     let payout = await array_of_pages[i].evaluate(() => { // finding the payout: how much money the user will get if he wins
         var x = document.getElementsByClassName("wpossiblepayout__payout")[0].innerText
         return (x)
     });
-
 
     // Click to place the bet and confirm the choice
     await array_of_pages[i].click('button[class = "btn--gradient btn--checkout btn--large  btn--wp100"]');
@@ -558,7 +557,6 @@ async function place_bet(socket, side, offer, i, bet) {
         let clear = await array_of_pages[i].waitForSelector(clear_selector);
         await clear.click()
     }
-
     var end = performance.now() // time until the bet placed gets a response from the betting website (all finished)
 
     console.log(colors.magenta(`\n ${username__} account ${(i + 1)} : ${colors.brightGreen(money_string + " €")}\n -------------------------`))
