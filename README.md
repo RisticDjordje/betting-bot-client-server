@@ -50,8 +50,8 @@
 <details>
   <summary>Table of Contents</summary>
   <ol>
-    <li><a href="#about-the-project">About The Project</a></li>
     <li><a href="#demo">Demo</a></li>
+    <li><a href="#about-the-project">About The Project</a></li>
     <li><a href="#built-with">Built With</a></li>
     <li><a href="#features">Features</a></li>
     <!--<li><a href="#roadmap">Roadmap</a></li> -->
@@ -61,6 +61,14 @@
 </details>
 <br>
 
+
+<!-- DEMO -->
+## Demo
+
+![](https://github.com/RisticDjordje/betting-bot-client-server/blob/master/Media/demo/demo.gif)
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+<br>
 
 <!-- ABOUT THE PROJECT -->
 ## About The Project
@@ -73,14 +81,6 @@ This project has 2 parts:
     - Listens to *client* signals to log-in, choose a match/offer, place bets and many more.
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-<br>
-
-<!-- DEMO -->
-## Demo
-
-![](https://github.com/RisticDjordje/betting-bot-client-server/blob/master/Media/demo/demo.gif)
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
 <br>
 
 <!-- BUILT WITH -->
