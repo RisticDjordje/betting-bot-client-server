@@ -12,7 +12,7 @@
 
 <div align="center">
 
-  <img src="https://github.com/RisticDjordje/betting-bot-client-server/blob/master/media/logo/BettingLogo2.png" alt="logo" width="160" height="auto" />
+  <img src="https://github.com/RisticDjordje/betting-bot-client-server/blob/master/Media/logo/BettingLogo2.png" alt="logo" width="160" height="auto" />
   <h1>EZ Money ultimate live-bet placing app</h1>
   
   <p>
@@ -78,7 +78,7 @@ This project has 2 parts:
 <!-- DEMO -->
 ## Demo
 
-![](https://github.com/RisticDjordje/betting-bot-client-server/blob/master/media/logo/demo.gif)
+![](https://github.com/RisticDjordje/betting-bot-client-server/blob/master/Media/demo/demo.gif)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 <br>
