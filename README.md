@@ -143,9 +143,9 @@ This project has 2 parts:
 
 <!-- CONTRIBUTING -->
 ## Contributors
-  <a href="https://github.com/risticdjordje"><img src="https://avatars.githubusercontent.com/u/38117050?v=4" alt="Djordje Ristic" width="130" height="130"></a> | <a href="https://github.com/spuksiii"><img src="https://avatars.githubusercontent.com/u/106120544?v=4" alt="Relja Vranjes" width="130" height="130"></a>
----|---
-[RisticDjordje](https://github.com/risticdjordje) | [Relja Vranjes](https://github.com/spuksiii) 
+  <a href="https://github.com/risticdjordje"><img src="https://avatars.githubusercontent.com/u/38117050?v=4" alt="Djordje Ristic" width="130" height="130"></a> | <a href="https://github.com/spuksiii"><img src="https://avatars.githubusercontent.com/u/106120544?v=4" alt="Relja Vranjes" width="130" height="130"></a> | <a href="https://github.com/MilosMaljak"><img src="https://avatars.githubusercontent.com/u/127912059?v=4" alt="Milos Maljak" width="130" height="130"></a> 
+---|---|---
+[RisticDjordje](https://github.com/risticdjordje) | [Relja Vranjes](https://github.com/spuksiii) | [MilosMaljak](https://github.com/MilosMaljak)
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 <br>
 
@@ -155,8 +155,12 @@ This project has 2 parts:
 <div align="center">
 <p align="center">
 <a href="https://www.linkedin.com/in/djordjeristic/"><img src="https://img.shields.io/badge/-Djordje%20Ristic-0077B5?style=for-the-badge&logo=Linkedin&logoColor=white"/></a>
+<a href="https://www.linkedin.com/in/reljavranjes/"><img src="https://img.shields.io/badge/-Relja%20Vranjes-0077B5?style=for-the-badge&logo=Linkedin&logoColor=white"/></a>
+<a href="https://www.linkedin.com/in/milos-maljak/"><img src="https://img.shields.io/badge/-Milos%20Maljak-0077B5?style=for-the-badge&logo=Linkedin&logoColor=white"/></a>
+<br>
 <a href="mailto:rist.djordje@gmail.com"><img src="https://img.shields.io/badge/-rist.djordje@gmail.com-D14836?style=for-the-badge&logo=Gmail&logoColor=white"/></a>
 <a href="https://twitter.com/itsdjordje"><img src="https://img.shields.io/badge/-itsdjordje-1DA1F2?style=for-the-badge&logo=twitter&logoColor=white"/></a>
+
 </p>
 </div>
 
