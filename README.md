@@ -29,7 +29,7 @@
   <img alt="GitHub issues" src="https://img.shields.io/github/issues/RisticDjordje/betting-bot-client-server">
   <img alt="Languages count" src="https://img.shields.io/github/languages/count/RisticDjordje/betting-bot-client-server">
   <img alt="Language top" src="https://img.shields.io/github/languages/top/RisticDjordje/betting-bot-client-server">
-  <img alt="Lines of code" src="https://img.shields.io/tokei/lines/github/RisticDjordje/betting-bot-client-server">
+  <img alt="Lines of code" src="https://sloc.xyz/github/RisticDjordje/betting-bot-client-server">
 </p> 
 </div> 
 
